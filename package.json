@@ -7,6 +7,7 @@
     , "jade": ">= 0.0.1"
     , "redis": ">= 0.7.2"
     , "MD5": "1.0.0"
+    , "nodemailer": "0.3.21"
     , "express-resource": "0.2.4"
   }
 }

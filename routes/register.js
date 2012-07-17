@@ -1,6 +1,17 @@
 var md5 = require('MD5');
 var redis = require("redis");
 var client = redis.createClient();
+var nodemailer = require("nodemailer");
+
+var SMTPtransport = nodemailer.createTransport("SMTP", {
+    host: "smtp.gmail.com", // HOSTNAME
+    secureConnection: true, // SSL
+    port: 465, // PORT SMTP
+    auth: {
+        user: "gmail.user@gmail.com",
+        pass: "userpass"
+    }
+});
 
 exports.create = function(req, res) {
 	var email = req.body.email;
@@ -30,7 +41,6 @@ exports.create = function(req, res) {
 									res.json({ error: 'pass unsaved' });
 								} else {
 									client.SET('uid:' + id + ':activated', false, function(err) {
-										console.log('uid:' + id + ':activated');
 										if(err) {
 											res.json('ERROR')
 										} else {
@@ -40,9 +50,21 @@ exports.create = function(req, res) {
 												if(err) {
 													res.json({ error: 'ERROR' });
 												} else {
+													var mailOptions = {
+														from: "Sender Name <sender@example.com>",
+														to: "reciver@example.com",
+														subject: "Hello",
+														text: "Hello world",
+														html: "<b>Hello world</b>"
+													}
 													// SEND EMAIL
-													//
-													res.json({ key: key });
+													SMTPtransport.sendMail(mailOptions, function(err){
+														if(err){
+															res.json({ error: 'not send email' });
+														} else {
+															res.json({ key: key });
+														}
+													});
 												}
 											});
 										}
