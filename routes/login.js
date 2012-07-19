@@ -12,7 +12,6 @@ exports.create = function(req, res) {
 			res.json('ERROR');
 		} else {
 			client.GET('uid:' + id + ':activated', function(err, activated) {
-				console.log('uid:' + id + ':activated');
 				if(err || (activated == "false")) {
 					res.json('ERROR');
 				} else {

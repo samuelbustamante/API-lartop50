@@ -8,18 +8,21 @@ var SMTPtransport = nodemailer.createTransport("SMTP", {
     secureConnection: true, // SSL
     port: 465, // PORT SMTP
     auth: {
-        user: "gmail.user@gmail.com",
-        pass: "userpass"
+        user: "user@gmail.com",
+        pass: "pass"
     }
 });
 
 exports.create = function(req, res) {
+	var name = req.body.name;
+	var company = req.body.company;
 	var email = req.body.email;
 	var pass = req.body.pass;
 
 	// CHECK INCOMPLETE DATA
-	if(!(email && pass)) {
+	if(!(name && company && email && pass)) {
 		res.json({ error: 'incomplete data' });
+		return; // CHECK !!
 	}
 
 	// CHECK EXIXTING EMAIL
@@ -40,29 +43,40 @@ exports.create = function(req, res) {
 								if(err) {
 									res.json({ error: 'pass unsaved' });
 								} else {
-									client.SET('uid:' + id + ':activated', false, function(err) {
+									// PROFILE OBJECT
+									var profile = {
+										name: name,
+										company: compay
+									};
+									client.HMSET('uid:' + id + ':profile', profile, function(err) {
 										if(err) {
-											res.json('ERROR')
+											res.json({ error: 'profile unsaved' });
 										} else {
-											// GENERATE KEY
-											var key = md5(Date() + email);
-											client.SET('key:' + key + ':uid', id, function(err) {
+											client.SET('uid:' + id + ':activated', false, function(err) {
 												if(err) {
-													res.json({ error: 'ERROR' });
+													res.json('ERROR')
 												} else {
-													var mailOptions = {
-														from: "Sender Name <sender@example.com>",
-														to: "reciver@example.com",
-														subject: "Hello",
-														text: "Hello world",
-														html: "<b>Hello world</b>"
-													}
-													// SEND EMAIL
-													SMTPtransport.sendMail(mailOptions, function(err){
-														if(err){
-															res.json({ error: 'not send email' });
+													// GENERATE KEY
+													var key = md5(Date() + email);
+													client.SET('key:' + key + ':uid', id, function(err) {
+														if(err) {
+															res.json({ error: 'ERROR' });
 														} else {
-															res.json({ key: key });
+															var mailOptions = {
+																from: "Name <user@gmail.com>",
+																to: "to@gmail.com",
+																subject: "KEY activate",
+																text: key,
+																html: '<p>' + key + '</p>'
+															}
+															// SEND EMAIL
+															SMTPtransport.sendMail(mailOptions, function(err){
+																if(err){
+																	res.json({ error: 'not send email' });
+																} else {
+																	res.json({ key: key });
+																}
+															});
 														}
 													});
 												}
