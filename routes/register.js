@@ -46,39 +46,36 @@ exports.create = function(req, res) {
 									// PROFILE OBJECT
 									var profile = {
 										name: name,
-										company: compay
+										company: company
 									};
 									client.HMSET('uid:' + id + ':profile', profile, function(err) {
 										if(err) {
 											res.json({ error: 'profile unsaved' });
 										} else {
-											client.SET('uid:' + id + ':activated', false, function(err) {
+											// GENERATE KEY
+											var key = md5(Date() + email);
+											client.SET('key:' + key + ':uid', id, function(err) {
 												if(err) {
-													res.json('ERROR')
+													res.json({ error: 'ERROR' });
 												} else {
-													// GENERATE KEY
-													var key = md5(Date() + email);
-													client.SET('key:' + key + ':uid', id, function(err) {
-														if(err) {
-															res.json({ error: 'ERROR' });
+													var mailOptions = {
+														from: "Name <user@gmail.com>",
+														to: "to@gmail.com",
+														subject: "KEY activate",
+														text: key,
+														html: '<p>' + key + '</p>'
+													}
+													// SEND EMAIL
+													/*
+													SMTPtransport.sendMail(mailOptions, function(err){
+														if(err){
+															res.json({ error: 'not send email' });
 														} else {
-															var mailOptions = {
-																from: "Name <user@gmail.com>",
-																to: "to@gmail.com",
-																subject: "KEY activate",
-																text: key,
-																html: '<p>' + key + '</p>'
-															}
-															// SEND EMAIL
-															SMTPtransport.sendMail(mailOptions, function(err){
-																if(err){
-																	res.json({ error: 'not send email' });
-																} else {
-																	res.json({ key: key });
-																}
-															});
+															res.json({ key: key });
 														}
 													});
+													*/
+													res.json({ key: key });
 												}
 											});
 										}

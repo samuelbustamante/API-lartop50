@@ -10,7 +10,7 @@ exports.show = function(req, res) {
 			res.json('ERROR');
 		} else {
 			// ACTIVATE
-			client.SET('uid:' + uid + ':activated', true, function(err) {
+			client.SADD('users:active', uid, function(err) {
 				if(err) {
 					res.json('ERROR');
 				} else {

@@ -11,8 +11,8 @@ exports.create = function(req, res) {
 		if(err || !id) {
 			res.json('ERROR');
 		} else {
-			client.GET('uid:' + id + ':activated', function(err, activated) {
-				if(err || (activated == "false")) {
+			client.SISMEMBER('users:active', id, function(err, member) {
+				if(err || !member) {
 					res.json('ERROR');
 				} else {
 					client.GET('uid:' + id + ':pass', function(err, realpass) {

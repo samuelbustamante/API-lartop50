@@ -34,6 +34,7 @@ app.configure('production', function(){
 app.resource('login', require('./routes/login'));
 app.resource('register', require('./routes/register'));
 app.resource('activate', require('./routes/activate'));
+app.resource('profiles', require('./routes/profiles'));
 
 app.listen(3000, function(){
   console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
