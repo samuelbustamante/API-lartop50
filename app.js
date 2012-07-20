@@ -31,10 +31,17 @@ app.configure('production', function(){
 
 // Routes
 
-app.resource('login', require('./routes/login'));
-app.resource('register', require('./routes/register'));
-app.resource('activate', require('./routes/activate'));
-app.resource('profiles', require('./routes/profiles'));
+// AUTH
+app.resource('auth/login', require('./routes/auth/login'));
+app.resource('auth/register', require('./routes/auth/register'));
+app.resource('auth/activate', require('./routes/auth/activate'));
+
+// PROFILES
+app.resource('profiles', require('./routes/profiles/profiles'));
+
+// CLUSTERS
+app.resource('clusters', require('./routes/clusters/clusters'));
+app.resource('clusters/components', require('./routes/clusters/components'));
 
 app.listen(3000, function(){
   console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);

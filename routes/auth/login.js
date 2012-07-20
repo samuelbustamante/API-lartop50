@@ -18,7 +18,7 @@ exports.create = function(req, res) {
 					client.GET('uid:' + id + ':pass', function(err, realpass) {
 						if(md5(pass) === realpass) {
 							// REVISE
-							req.session.auth = id;
+							req.session.auth.id = id;
 							res.json('OK');
 						} else {
 							res.json('ERROR');
