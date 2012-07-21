@@ -1,16 +1,23 @@
 var redis = require("redis");
+var auth = require("../auth/auth");
+
 var client = redis.createClient(), multi;
 
 exports.create = function(req, res) {
-	var data = req.body.data;
-	var user = req.session.auth.id;
+	auth.is_authenticated(req, function(user) {
+		if(user) {
+			var data = req.body.data;
 
-	client.INCR('clusters', function(err, id) {
-		client.HMSET('cluster:' + id + ':description', data, function(err) {
-			client.SADD('uid:' + user + ':clusters', id, function(err) {
-				res.json('OK');
+			client.INCR('clusters', function(err, id) {
+				client.HMSET('cluster:' + id + ':description', data, function(err) {
+					client.SADD('uid:' + user + ':clusters', id, function(err) {
+						res.json('OK');
+					});
+				});
 			});
-		});
+		} else {
+			res.json({ error: 'not authenticated' });
+		}
 	});
 };
 

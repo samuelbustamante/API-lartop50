@@ -1,5 +1,25 @@
 var redis = require("redis");
+var auth = require("../auth/auth");
+
 var client = redis.createClient(), multi;
+
+exports.create = function(req, res) {
+	auth.is_authenticated(req, function(user) {
+		if(user) {
+			var data = req.body.data;
+
+			client.HMSET('uid:' + user + ':profile', data, function(err) {
+				if(err) {
+					res.json({ error: 'not saved' });
+				} else {
+					res.json({ sucess: 'ok' });
+				}
+			});
+		} else {
+			res.json({ error: 'not authenticated' });
+		}
+	});
+};
 
 exports.index = function(req, res) {
 	client.SMEMBERS('users:active', function(err, members) {
@@ -13,7 +33,7 @@ exports.index = function(req, res) {
 			}
 			client.multi(cmds).exec(function(err, replies) {
 				if(err) {
-					res.json('ERROR');
+					res.json({ error: 'not results' });
 				} else {
 					res.json(replies);
 				}
