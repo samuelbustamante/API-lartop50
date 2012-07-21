@@ -14,15 +14,15 @@
 
 ## REDIS DATABASE SCHEMA
 
-	user:<email> (uid) => user id
-	uid:<uid>:pass (string) => password (MD5)
-	uid:<uid>:profile (hash) => user profile
-	uid:<uid>:clusters (set) => set of cluster ids
-	users:active (set) => set of uid
-	key:<key>:uid (id) => user id
-	cluster:<id>:description (hash) => description
-	cluster:<id>:components (set) => set of components ids
-	component:<id>:description (hash) => description
+	lartop50:user:<email> (uid) => user id
+	lartop50:uid:<uid>:pass (string) => password (MD5)
+	lartop50:uid:<uid>:profile (hash) => user profile
+	lartop50:uid:<uid>:clusters (set) => set of cluster ids
+	lartop50:users:active (set) => set of uid
+	lartop50:key:<key>:uid (id) => user id
+	lartop50:cluster:<id>:description (hash) => description
+	lartop50:cluster:<id>:components (set) => set of components ids
+	lartop50:component:<id>:description (hash) => description
 
 	<email> -> email user
 	<uid>   -> user id

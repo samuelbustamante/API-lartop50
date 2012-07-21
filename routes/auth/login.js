@@ -7,15 +7,15 @@ exports.create = function(req, res) {
 	var pass = req.body.pass;
 
 	//CHECK
-	client.GET('user:' + email + ':id', function(err, id) {
+	client.GET('lartop50:user:' + email + ':id', function(err, id) {
 		if(err || !id) {
 			res.json('ERROR');
 		} else {
-			client.SISMEMBER('users:active', id, function(err, member) {
+			client.SISMEMBER('lartop50:users:active', id, function(err, member) {
 				if(err || !member) {
 					res.json('ERROR');
 				} else {
-					client.GET('uid:' + id + ':pass', function(err, realpass) {
+					client.GET('lartop50:uid:' + id + ':pass', function(err, realpass) {
 						if(md5(pass) === realpass) {
 							// REVISE
 							req.session.auth.id = id;

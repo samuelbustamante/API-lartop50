@@ -26,20 +26,20 @@ exports.create = function(req, res) {
 	}
 
 	// CHECK EXIXTING EMAIL
-	client.GET('user:' + email + ':id', function(err, id) {
+	client.GET('lartop50:user:' + email + ':id', function(err, id) {
 		if(id) {
 			res.json({ error: 'existing email' });
 		} else {
-			client.INCR('user', function(err, id) {
+			client.INCR('lartop50:user', function(err, id) {
 				if(err) {
 					res.json({ error: 'id not generated' });
 				} else {
 					//REGISTER USER
-					client.SET('user:' + email + ':id', id, function(err) {
+					client.SET('lartop50:user:' + email + ':id', id, function(err) {
 						if(err) {
 							res.json({ error: 'email unsaved' });
 						} else {
-							client.SET('uid:' + id + ':pass', md5(pass), function(err) {
+							client.SET('lartop50:uid:' + id + ':pass', md5(pass), function(err) {
 								if(err) {
 									res.json({ error: 'pass unsaved' });
 								} else {
@@ -48,13 +48,13 @@ exports.create = function(req, res) {
 										name: name,
 										company: company
 									};
-									client.HMSET('uid:' + id + ':profile', profile, function(err) {
+									client.HMSET('lartop50:uid:' + id + ':profile', profile, function(err) {
 										if(err) {
 											res.json({ error: 'profile unsaved' });
 										} else {
 											// GENERATE KEY
 											var key = md5(Date() + email);
-											client.SET('key:' + key + ':uid', id, function(err) {
+											client.SET('lartop50:key:' + key + ':uid', id, function(err) {
 												if(err) {
 													res.json({ error: 'ERROR' });
 												} else {

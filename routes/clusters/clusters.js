@@ -8,9 +8,9 @@ exports.create = function(req, res) {
 		if(user) {
 			var data = req.body.data;
 
-			client.INCR('clusters', function(err, id) {
-				client.HMSET('cluster:' + id + ':description', data, function(err) {
-					client.SADD('uid:' + user + ':clusters', id, function(err) {
+			client.INCR('lartop50:clusters', function(err, id) {
+				client.HMSET('lartop50:cluster:' + id + ':description', data, function(err) {
+					client.SADD('lartop50:uid:' + user + ':clusters', id, function(err) {
 						res.json('OK');
 					});
 				});
@@ -24,12 +24,12 @@ exports.create = function(req, res) {
 exports.show = function(req, res) {
 	var id = req.params.cluster;
 
-	client.HGETALL('cluster:' + id + ':description', function(err, description) {
-		client.SMEMBERS('cluster:' + id + ':components', function(err, components) {
+	client.HGETALL('lartop50:cluster:' + id + ':description', function(err, description) {
+		client.SMEMBERS('lartop50:cluster:' + id + ':components', function(err, components) {
 			var i, cmds = [];
 
 			for(i in components) {
-				cmds.push(['HGETALL', 'component:' + components[i] + ':description']);
+				cmds.push(['HGETALL', 'lartop50:component:' + components[i] + ':description']);
 			}
 
 			client.multi(cmds).exec(function(err, replies) {

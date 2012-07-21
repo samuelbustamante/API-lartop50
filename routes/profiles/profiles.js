@@ -8,7 +8,7 @@ exports.create = function(req, res) {
 		if(user) {
 			var data = req.body.data;
 
-			client.HMSET('uid:' + user + ':profile', data, function(err) {
+			client.HMSET('lartop50:uid:' + user + ':profile', data, function(err) {
 				if(err) {
 					res.json({ error: 'not saved' });
 				} else {
@@ -22,14 +22,14 @@ exports.create = function(req, res) {
 };
 
 exports.index = function(req, res) {
-	client.SMEMBERS('users:active', function(err, members) {
+	client.SMEMBERS('lartop50:users:active', function(err, members) {
 		if(err) {
 			res.json('ERROR');
 		} else {
 			var i, cmds = [];
 
 			for(i in members) {
-				cmds.push(['HGETALL', 'uid:' + members[i] + ':profile']);
+				cmds.push(['HGETALL', 'lartop50:uid:' + members[i] + ':profile']);
 			}
 			client.multi(cmds).exec(function(err, replies) {
 				if(err) {
