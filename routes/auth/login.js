@@ -3,6 +3,18 @@ var redis = require("redis");
 var client = redis.createClient();
 
 exports.create = function(req, res) {
+
+	// VALIDATE
+	req.assert('email').isEmail();
+	req.assert('pass').len(6, 64);
+
+	var errors = req.validationErrors(true);
+
+	if(errors) {
+		res.json({ error: errors }, 500);	
+		return;
+	}
+
 	var email = req.body.email;
 	var pass = req.body.pass;
 

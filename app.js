@@ -5,6 +5,7 @@
 
 var express = require('express');
 var Resource = require('express-resource');
+var Validator = require('express-validator');
 var app = module.exports = express.createServer();
 
 // Configuration
@@ -12,8 +13,9 @@ var app = module.exports = express.createServer();
 app.configure(function(){
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
-//app.set('view options', { layout: false });
+  app.set('view options', { layout: false });
   app.use(express.bodyParser());
+  app.use(Validator);
   app.use(express.cookieParser());
   app.use(express.session({ secret: 'SECRET' }));
   app.use(express.methodOverride());
@@ -28,8 +30,6 @@ app.configure('development', function(){
 app.configure('production', function(){
   app.use(express.errorHandler());
 });
-
-// Routes
 
 // AUTH
 app.resource('auth/login', require('./routes/auth/login'));

@@ -3,7 +3,7 @@ var auth = require("../auth/auth");
 
 var client = redis.createClient(), multi;
 
-exports.create = function(req, res) {
+exports.update = function(req, res) {
 	auth.is_authenticated(req, function(user) {
 		if(user) {
 			var data = req.body.data;
