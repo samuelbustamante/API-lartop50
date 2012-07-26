@@ -14,49 +14,41 @@
 
 	GET /profiles  => returns all active user profiles.
 
-	PUT /profiles  <= data[name]     (required, not null)
-                     data[company]  (required, not null)
-                     data[web]      (not required, valid url)
-                     data[twitter]  (not required, valid url)
-                     data[facebook] (not required, valid url)
-                     ...
+	PUT /profiles  <= name     (required, not null)
+                     company  (required, not null)
+                     web      (not required, valid url)
+                     twitter  (not required, valid url)
+                     facebook (not required, valid url)
 
-	POST /clusters <= data[name]
-                     data[acronym]
-                     data[url]
-                     data[segment]
-                     data[description]
-                     data[city]
-                     data[country]
-                     data[state]
+	POST /clusters <= name
+                     acronym
+                     url
+                     segment
+                     description
+                     city
+                     country
+                     state
 
 	GET  /clusters/:id   => returns the description with all its components.
 
 	POST /clusters/components <= cluster (id cluster)
-                                data[name]
-                                data[model]
-                                data[vendor]
-
-                                data[nodes]
-
-                                data[processor_name]
-                                data[processor_model]
-                                data[processor_socket]
-                                data[processor_cores]
-                                data[processor_speed]
-
-                                data[accelerator_name]
-                                data[accelerator_model]
-                                data[accelerator_number]
-                                data[accelerator_cores]
-                                data[accelerator_speed]
-
-                                data[power_kW]
-
-                                data[primary_operatingsystem]
-                                data[primary_interconecton]
-
-                                data[memory_node]
+                                name
+                                model
+                                vendor
+                                nodes
+                                processor_name
+                                processor_model
+                                processor_socket
+                                processor_cores
+                                processor_speed
+                                accelerator_name
+                                accelerator_model
+                                accelerator_number
+                                accelerator_cores
+                                accelerator_speed
+                                primary_operatingsystem
+                                primary_interconecton
+                                memory_node
 
 	GET  /clusters/components/:id => returns the description.
 

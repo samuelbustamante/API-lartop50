@@ -3,10 +3,31 @@ var auth = require("../auth/auth");
 
 var client = redis.createClient(), multi;
 
-exports.update = function(req, res) {
+exports.create = function(req, res) {
 	auth.is_authenticated(req, function(user) {
 		if(user) {
-			var data = req.body.data;
+
+			// VALIDATE
+			req.assert('name').notEmpty();
+			req.assert('company').notEmpty();
+			if(req.body.web) req.assert('web').isUrl();
+			if(req.body.twitter) req.assert('twitter').isUrl();
+			if(req.body.facebook) req.assert('facebook').isUrl();
+
+			var errors = req.validationErrors(true);
+
+			if(errors) {
+				res.json({ error: errors }, 500);	
+				return;
+			}
+
+			var data = {};
+
+			data.name = req.body.name;
+			data.company = req.body.company;
+			if(req.body.web) data.web = req.body.web;
+			if(req.body.twitter) data.twitter = req.body.twitter;
+			if(req.body.facebook) data.facebook = req.body.facebook;
 
 			client.HMSET('lartop50:uid:' + user + ':profile', data, function(err) {
 				if(err) {

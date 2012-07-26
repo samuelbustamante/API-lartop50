@@ -2,7 +2,19 @@ var redis = require("redis");
 var client = redis.createClient();
 
 exports.show = function(req, res) {
-	key = req.params.activate;
+
+	// VALIDATE
+	req.assert('activate').len(32, 32);
+	req.assert('activate').isAlphanumeric();
+
+	var errors = req.validationErrors(true);
+
+	if(errors) {
+		res.json({ error: errors }, 500);	
+		return;
+	}
+
+	var key = req.params.activate;
 
 	// CHECK CODE
 	client.GET('lartop50:key:' + key + ':uid', function(err, uid) {

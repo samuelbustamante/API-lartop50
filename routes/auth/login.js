@@ -30,7 +30,7 @@ exports.create = function(req, res) {
 					client.GET('lartop50:uid:' + id + ':pass', function(err, realpass) {
 						if(md5(pass) === realpass) {
 							// REVISE
-							req.session.auth.id = id;
+							req.session.auth = id;
 							res.json('OK');
 						} else {
 							res.json('ERROR');

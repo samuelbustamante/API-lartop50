@@ -14,6 +14,20 @@ var SMTPtransport = nodemailer.createTransport("SMTP", {
 });
 
 exports.create = function(req, res) {
+
+	// VALIDATE
+	req.assert('name').notEmpty();
+	req.assert('company').notEmpty();
+	req.assert('email').isEmail();
+	req.assert('pass').len(6, 12);
+
+	var errors = req.validationErrors(true);
+
+	if(errors) {
+		res.json({ error: errors }, 500);	
+		return;
+	}
+
 	var name = req.body.name;
 	var company = req.body.company;
 	var email = req.body.email;

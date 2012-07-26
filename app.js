@@ -31,6 +31,9 @@ app.configure('production', function(){
   app.use(express.errorHandler());
 });
 
+// INDEX
+app.resource('', require('./routes/index'));
+
 // AUTH
 app.resource('auth/login', require('./routes/auth/login'));
 app.resource('auth/register', require('./routes/auth/register'));
