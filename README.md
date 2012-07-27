@@ -52,6 +52,23 @@
 
 	GET  /clusters/components/:id => returns the description.
 
+	POST /clusters/limpacks <= cluster (id cluster)
+                              benchmark_date
+                              cores
+                              gpu_cores
+                              rmax
+                              rpeak
+                              nmax
+                              nhalf
+                              compiler_name
+                              compiler_options
+                              math_library
+                              mpi_library
+                              hpl_input
+                              hpl_output
+
+
+
 ## REDIS DATABASE SCHEMA
 
 	lartop50:user:<email> (uid) => user id

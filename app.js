@@ -44,6 +44,7 @@ app.resource('profiles', require('./routes/profiles/profiles'));
 
 // CLUSTERS
 app.resource('clusters', require('./routes/clusters/clusters'));
+app.resource('clusters/linpacks', require('./routes/clusters/linpacks'));
 app.resource('clusters/components', require('./routes/clusters/components'));
 
 app.listen(3000, function(){
