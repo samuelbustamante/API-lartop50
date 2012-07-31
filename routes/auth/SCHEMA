@@ -1,0 +1,8 @@
+user -> <uid>
+
+user:<email> -> <uid>
+
+uid:<uid>:pass -> string
+uid:<uid>:active -> "true" || "false"
+
+key:<key> -> <uid>
