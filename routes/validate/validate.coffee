@@ -3,22 +3,25 @@ module.exports =
 	validators:
 
 		alpha: (str) ->
-			str.match(/^[a-zA-Z]{1, 64}$/)
+			str.match(/^[a-zA-Z ]{1,64}$/)
 
 		numeric: (str) ->
-			str.match(/^-?[0-9]{1, 15}$/)
+			str.match(/^[0-9]{1,15}$/)
 
 		integer: (str) ->
 			this.numeric(str)
 
 		alphanumeric: (str) ->
-			str.match(/^[a-zA-Z0-9]{1, 64}$/)
+			str.match(/^[a-zA-Z0-9 ]{1,64}$/)
 
 		char: (str) ->
 			this.alphanumeric(str)
 
 		text: (str) ->
-			str.match(/^[a-zA-Z0-9]{1, 250}$/)
+			str.match(/^[a-zA-Z0-9 ]{1,250}$/)
+
+		url: (str) ->
+			str.match(/(http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/)
 
 		md5: (str) ->
 			str.match(/^[0-9a-z]{32}$/)

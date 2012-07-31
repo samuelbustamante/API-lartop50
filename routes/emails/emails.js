@@ -9,8 +9,8 @@
     secureConnection: true,
     port: 465,
     auth: {
-      user: "",
-      pass: ""
+      user: "samuelbustamant@gmail.com",
+      pass: "bahiaInglesa09"
     }
   });
 
@@ -18,7 +18,7 @@
     send: function(to, subject, text, html, callback) {
       var mailOptions;
       mailOptions = {
-        from: "",
+        from: "Samuel Bustamante <samuelbustamant@gmail.com>",
         to: to,
         subject: subject,
         text: text,

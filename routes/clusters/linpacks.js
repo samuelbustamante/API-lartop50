@@ -16,32 +16,32 @@
     return auth.is_authenticated(req, function(user) {
       var cluster, data, options;
       if (!user) {
-        res.json(401);
+        res.json({}, 401);
         return;
       }
       options = [["cluster", "integer"], ["benchmark_date", "datetime"], ["cores", "integer"], ["gpu_cores", "integer"], ["rmax", "char"], ["rpeak", "char"], ["nmax", "char"], ["nhalf", "char"], ["compiler_name", "char"], ["compiler_options", "char"], ["math_library", "char"], ["mpi_library", "char"], ["hpl_input", "text"], ["hpl_output", "text"]];
       data = validate.validate(options, req.body);
       if (!data) {
-        res.json(400);
+        res.json({}, 400);
         return;
       }
       cluster = data.cluster;
       delete data.cluster;
       return client.INCR(keys.linpack_key, function(error, id) {
         if (error) {
-          res.json(500);
+          res.json({}, 500);
           return;
         }
         return client.HMSET(keys.linpack(id), data, function(error) {
           if (error) {
-            res.json(500);
+            res.json({}, 500);
             return;
           }
           return client.APPEND(keys.linpacks(cluster), id, function(error) {
             if (error) {
-              return res.json(500);
+              return res.json({}, 500);
             } else {
-              return res.json(200);
+              return res.json({}, 200);
             }
           });
         });
@@ -55,9 +55,9 @@
     data = validate.validate(options, req.params);
     return client.HGETALL(keys.linpack(data.linpack), function(error, data) {
       if (error) {
-        return res.json(500);
+        return res.json({}, 500);
       } else {
-        return res.json(data);
+        return res.json(data, 200);
       }
     });
   };

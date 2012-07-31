@@ -11,21 +11,21 @@ exports.create = (req, res) ->
 	options = [
 		["email", "email"]
 		["password", "password"]
-		["name", "alphanumeric"]
-		["organization", "alphanumeric"]
+		["name", "char"]
+		["organization", "char"]
 	]
 
 	data = validate.validate(options, req.body)
 
 	if !data
-		res.json({}, 400)
+		res.json({ message: "datos inválidos." }, 400)
 		return
 
 	# CHECK EXISTING EMAIL
 	client.GET keys.user(data.email), (error, uid) ->
 		# EMAIL IS ALREADY IN USE
 		if uid
-			res.json({ error: "email is already in use." }, 410)
+			res.json({ message: "correo electrónico en uso." }, 410)
 			return
 
 		client.INCR keys.key(), (error, uid) ->
@@ -49,7 +49,7 @@ exports.create = (req, res) ->
 						name: data.name
 						organization: data.organization
 
-					client.HSET keys.profile(uid), profile, (error) ->
+					client.HMSET keys.profile(uid), profile, (error) ->
 					# ERROR
 						if error
 							res.json({}, 500)
@@ -77,4 +77,4 @@ exports.create = (req, res) ->
 										console.log(error)
 									# EMAIL SEND
 									else
-										res.json({}, 200)
+										res.json({message: "registración exitosa."}, 200)

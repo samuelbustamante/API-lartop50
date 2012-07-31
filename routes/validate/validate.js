@@ -4,22 +4,25 @@
   module.exports = {
     validators: {
       alpha: function(str) {
-        return str.match(/^[a-zA-Z]{1, 64}$/);
+        return str.match(/^[a-zA-Z ]{1,64}$/);
       },
       numeric: function(str) {
-        return str.match(/^-?[0-9]{1, 15}$/);
+        return str.match(/^[0-9]{1,15}$/);
       },
       integer: function(str) {
         return this.numeric(str);
       },
       alphanumeric: function(str) {
-        return str.match(/^[a-zA-Z0-9]{1, 64}$/);
+        return str.match(/^[a-zA-Z0-9 ]{1,64}$/);
       },
       char: function(str) {
         return this.alphanumeric(str);
       },
       text: function(str) {
-        return str.match(/^[a-zA-Z0-9]{1, 250}$/);
+        return str.match(/^[a-zA-Z0-9 ]{1,250}$/);
+      },
+      url: function(str) {
+        return str.match(/(http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/);
       },
       md5: function(str) {
         return str.match(/^[0-9a-z]{32}$/);

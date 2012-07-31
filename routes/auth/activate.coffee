@@ -16,11 +16,12 @@ exports.show = (req, res) ->
 		res.json({}, 400)
 		return
 
-	client.GET keys.activate(data.key), (error, uid) ->
+	client.GET keys.activate(data.activate), (error, uid) ->
 		# ERROR
 		if error
 			res.json({}, 500)
 			return
+
 		# KEY NOT FOUND
 		if not uid
 			res.json({}, 404)
@@ -32,7 +33,7 @@ exports.show = (req, res) ->
 				res.json({}, 500)
 				return
 
-			client.DEL keys.activate(data.key), (error) ->
+			client.DEL keys.activate(data.activate), (error) ->
 				# ERROR
 				if error
 					res.json({}, 500)

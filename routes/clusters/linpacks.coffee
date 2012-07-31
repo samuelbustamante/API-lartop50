@@ -10,7 +10,7 @@ exports.create = (req, res) ->
 	auth.is_authenticated req, (user) ->
 
 		if not user
-			res.json(401)
+			res.json({}, 401)
 			return
 
 		options = [
@@ -33,7 +33,7 @@ exports.create = (req, res) ->
 		data = validate.validate(options, req.body)
 
 		if not data
-			res.json(400)
+			res.json({}, 400)
 			return
 
 		cluster = data.cluster
@@ -42,19 +42,19 @@ exports.create = (req, res) ->
 
 		client.INCR keys.linpack_key, (error, id) ->
 			if error
-				res.json(500)
+				res.json({}, 500)
 				return
 
 			client.HMSET keys.linpack(id), data, (error) ->
 				if error
-					res.json(500)
+					res.json({}, 500)
 					return
 
 				client.APPEND keys.linpacks(cluster), id, (error) ->
 					if error
-						res.json(500)
+						res.json({}, 500)
 					else
-						res.json(200)
+						res.json({}, 200)
 
 exports.show = (req, res) ->
 
@@ -66,6 +66,6 @@ exports.show = (req, res) ->
 
 	client.HGETALL keys.linpack(data.linpack), (error, data) ->
 		if error
-			res.json(500)
+			res.json({}, 500)
 		else
-			res.json(data)
+			res.json(data, 200)

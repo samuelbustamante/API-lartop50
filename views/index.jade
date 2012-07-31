@@ -1,5 +1,115 @@
 doctype 5
 html(lang="en")
 	head
+		link(href="http://twitter.github.com/bootstrap/assets/css/bootstrap.css", rel="stylesheet")
 		script(src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js")
 	body
+		div.container
+			div.row.span12
+				form(method="POST", action="/auth/register").well.form#form-register
+					input(type="text", placeholder="Name", name="name").span3
+					input(type="text", placeholder="Organization", name="organization").span3
+					input(type="text", placeholder="Email", name="email").span3
+					input(type="password", placeholder="Password", name="password").span3
+					button(type="submit").btn.btn-primary Registrarse
+
+			div.row.span12
+				form(method="POST", action="/auth/login").well.form#form-login
+					input(type="text", placeholder="Email", name="email")
+					input(type="password", placeholder="Password", name="password")
+					button(type="submit").btn Ingresar
+
+			div.row.span12
+				form(method="GET", action="/auth/activate/").well.form#form-activate
+					input(type="text", placeholder="Key Activate", name="key")
+					button(type="submit").btn Activar
+
+		script
+			$(document).ready(function() {
+				$("#form-register").submit(function() {
+
+					$.ajax({
+						data: $(this).serialize(),
+						url : $(this).attr("action"),
+						type: $(this).attr("method"),
+						statusCode: {
+							200: function(data) { // successful registration
+								alert(data.message);
+							},
+							400: function(xhr) { // invalid parameters
+								var data = JSON.parse(xhr.responseText);
+
+								alert(data.message);
+							},
+							410: function(xhr) { // email is already in use
+								var data = JSON.parse(xhr.responseText);
+
+								alert(data.message);
+							},
+							500: function() { // internal error
+								alert("internal error");
+							}
+						}
+					});
+
+					return false;
+				});
+
+				$("#form-login").submit(function() {
+
+					$.ajax({
+						data: $(this).serialize(),
+						url : $(this).attr("action"),
+						type: $(this).attr("method"),
+						statusCode: {
+							200: function(data) { // successful login
+								alert(data.message);
+							},
+							400: function(xhr) { // invalid parameters
+								var data = JSON.parse(xhr.responseText);
+
+								alert(data.message);
+							},
+							404: function(xhr) { // user and password not found
+								var data = JSON.parse(xhr.responseText);
+
+								alert(data.message);
+							},
+							500: function() { // internal error
+								alert("internal error");
+							}
+						}
+					});
+
+					return false;
+				});
+
+				$("#form-activate").submit(function() {
+
+					$.ajax({
+						type: $(this).attr("method"),
+						url: $(this).attr("action") + $(this).find('input[name="key"]').val(),
+						statusCode: {
+							200: function(data) { // activation successful
+								alert(data.message);
+							},
+							400: function(xhr) { // invalid key
+								var data = JSON.parse(xhr.responseText);
+
+								alert(data.message);
+							},
+							404: function(xhr) { // key not found
+								var data = JSON.parse(xhr.responseText);
+
+								alert(data.message);
+							},
+							500: function() { // internal error
+								alert("internal error");
+							}
+						}
+					});
+
+					return false;
+				});
+
+			});

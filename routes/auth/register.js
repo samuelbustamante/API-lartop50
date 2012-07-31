@@ -16,16 +16,18 @@
 
   exports.create = function(req, res) {
     var data, options;
-    options = [["email", "email"], ["password", "password"], ["name", "alphanumeric"], ["organization", "alphanumeric"]];
+    options = [["email", "email"], ["password", "password"], ["name", "char"], ["organization", "char"]];
     data = validate.validate(options, req.body);
     if (!data) {
-      res.json({}, 400);
+      res.json({
+        message: "datos inválidos."
+      }, 400);
       return;
     }
     return client.GET(keys.user(data.email), function(error, uid) {
       if (uid) {
         res.json({
-          error: "email is already in use."
+          message: "correo electrónico en uso."
         }, 410);
         return;
       }
@@ -49,7 +51,7 @@
               name: data.name,
               organization: data.organization
             };
-            return client.HSET(keys.profile(uid), profile, function(error) {
+            return client.HMSET(keys.profile(uid), profile, function(error) {
               if (error) {
                 res.json({}, 500);
                 return;
@@ -71,7 +73,9 @@
                       res.json({}, 500);
                       return console.log(error);
                     } else {
-                      return res.json({}, 200);
+                      return res.json({
+                        message: "registración exitosa."
+                      }, 200);
                     }
                   });
                 });

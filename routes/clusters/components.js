@@ -22,26 +22,26 @@
       options = [["cluster", "integer"], ["name", "char"], ["model", "char"], ["vendor", "char"], ["nodes", "integer"], ["processor_name", "char"], ["processor_model", "char"], ["processor_socket", "char"], ["processor_cores", "integer"], ["processor_speed", "char"], ["accelerator_name", "char"], ["accelerator_model", "char"], ["accelerator_number", "integer"], ["accelerator_cores", "integer"], ["accelerator_speed", "char"], ["primary_operatingsystem", "char"], ["primary_interconecton", "char"], ["memory_node", "integer"]];
       data = validate.validate(options, req.body);
       if (!data) {
-        res.json(400);
+        res.json({}, 400);
         return;
       }
       cluster = data.cluster;
       delete data.cluster;
       return client.INCR(keys.component_key, function(error, id) {
         if (error) {
-          res.json(500);
+          res.json({}, 500);
           return;
         }
         return client.HMSET(keys.component(id), data, function(error) {
           if (error) {
-            res.json(500);
+            res.json({}, 500);
             return;
           }
           return client.SADD(keys.components(cluster), id, function(error) {
             if (error) {
-              return res.json(500);
+              return res.json({}, 500);
             } else {
-              return res.json(200);
+              return res.json({}, 200);
             }
           });
         });
@@ -54,14 +54,14 @@
     options = [["component", "integer"]];
     data = validate.validate(options, req.params);
     if (!data) {
-      res.json(400);
+      res.json({}, 400);
       return;
     }
     return client.HGETALL(keys.component(data.component), function(error, data) {
       if (error) {
-        return res.json(500);
+        return res.json({}, 500);
       } else {
-        return res.json(data);
+        return res.json(data, 200);
       }
     });
   };
