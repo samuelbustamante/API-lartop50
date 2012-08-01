@@ -43,7 +43,7 @@ module.exports =
 	component_key: (app = this.app) ->
 		"#{app}:component"
 
-	component: (id, app = this.app) ->
+	component_description: (id, app = this.app) ->
 		"#{app}:component:#{id}:"
 
 	# LINPACKS
@@ -51,5 +51,5 @@ module.exports =
 	linpack_key: (app = this.app) ->
 		"#{app}:linpack"
 
-	linpack: (id, app = this.app) ->
-		"#{app}:linpack:#{id}:"
+	linpack_description: (id, app = this.app) ->
+		"#{app}:linpack:#{id}"

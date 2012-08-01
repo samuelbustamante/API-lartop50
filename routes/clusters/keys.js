@@ -3,23 +3,53 @@
 
   module.exports = {
     app: "lartop50",
+    project_key: function(app) {
+      if (app == null) {
+        app = this.app;
+      }
+      return "" + app + ":project";
+    },
+    project_description: function(id, app) {
+      if (app == null) {
+        app = this.app;
+      }
+      return "" + app + ":project:" + id + ":description";
+    },
+    project_clusters: function(id, app) {
+      if (app == null) {
+        app = this.app;
+      }
+      return "" + app + ":project:" + id + ":clusters";
+    },
+    user_projects: function(uid, app) {
+      if (app == null) {
+        app = this.app;
+      }
+      return "" + app + ":uid:" + uid + ":projects";
+    },
     cluster_key: function(app) {
       if (app == null) {
         app = this.app;
       }
       return "" + app + ":cluster";
     },
-    cluster: function(id, app) {
+    cluster_description: function(id, app) {
       if (app == null) {
         app = this.app;
       }
       return "" + app + ":cluster:" + id + ":description";
     },
-    clusters: function(uid, app) {
+    cluster_components: function(id, app) {
       if (app == null) {
         app = this.app;
       }
-      return "" + app + ":uid:" + uid + ":clusters";
+      return "" + app + ":cluster:" + id + ":components";
+    },
+    cluster_linpack: function(id, app) {
+      if (app == null) {
+        app = this.app;
+      }
+      return "" + app + ":cluster:" + id + ":linpack";
     },
     component_key: function(app) {
       if (app == null) {
@@ -27,17 +57,11 @@
       }
       return "" + app + ":component";
     },
-    component: function(id, app) {
+    component_description: function(id, app) {
       if (app == null) {
         app = this.app;
       }
-      return "" + app + ":cluster:component:" + id + ":";
-    },
-    components: function(id, app) {
-      if (app == null) {
-        app = this.app;
-      }
-      return "" + app + ":cluster:" + id + ":components";
+      return "" + app + ":component:" + id + ":";
     },
     linpack_key: function(app) {
       if (app == null) {
@@ -45,17 +69,11 @@
       }
       return "" + app + ":linpack";
     },
-    linpack: function(id, app) {
+    linpack_description: function(id, app) {
       if (app == null) {
         app = this.app;
       }
-      return "" + app + ":cluster:linpack:" + id + ":";
-    },
-    linpacks: function(id, app) {
-      if (app == null) {
-        app = this.app;
-      }
-      return "" + app + ":cluster:" + id + ":linpack";
+      return "" + app + ":linpack:" + id;
     }
   };
 

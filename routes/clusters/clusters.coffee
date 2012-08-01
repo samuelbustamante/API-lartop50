@@ -16,17 +16,19 @@ exports.create = (req, res) ->
 
 		# VALIDATORS
 		req.assert("name").notEmpty()
-		req.assert("acronym").notEmpty()
 		req.assert("status").notEmpty()
-		req.assert("segment").notEmpty()
 		req.assert("area").notEmpty()
 		req.assert("description").notEmpty()
-		req.assert("provider").notEmpty()
-		req.assert("initiation").notEmpty()
-		req.assert("url").notEmpty().isUrl()
-		req.assert("country").notEmpty()
-		req.assert("state").notEmpty()
-		req.assert("city").notEmpty()
+		req.assert("vendor").notEmpty()
+		req.assert("initiation").isDate()
+		# ID PROJECT
+		req.assert("project").isInt()
+
+		#######################
+		#                     #
+		# !!! REVIEW DATA !!! #
+		#                     #
+		#######################
 
 		# VALIDATE PARAMETERS
 		errors = req.validationErrors()
@@ -37,31 +39,26 @@ exports.create = (req, res) ->
 			return
 
 		# VALID PARAMETERS
+		project = req.body.project
 		data =
 			name: req.body.name
-			acronym: req.body.acronym
 			status: req.body.status
-			segment: req.body.segment
 			area: req.body.area
 			description: req.body.description
-			provider: req.body.provider
+			vendor: req.body.vendor
 			initiation: req.body.initiation
-			url: req.body.url
-			country: req.body.country
-			state: req.body.state
-			city: req.body.city
 
 		client.INCR keys.cluster_key(), (error, id) ->
 			if error
 				res.json({ message: "internal error" }, 500)
 				return
 
-			client.HMSET keys.cluster(id), data, (error) ->
+			client.HMSET keys.cluster_description(id), data, (error) ->
 				if error
 					res.json({ message: "internal error" }, 500)
 					return
 
-				client.SADD keys.clusters(user), id, (error) ->
+				client.SADD keys.project_clusters(project), id, (error) ->
 					if error
 						res.json({ message: "internal error" }, 500)
 					else
@@ -70,17 +67,22 @@ exports.create = (req, res) ->
 
 exports.show = (req, res) ->
 
-	options = [
-		["cluster", "integer"]
-	]
+	# VALIDATORS
+	req.assert("cluster").isInt()
 
-	data = validate.validate(options, req.params)
 
-	if not data
-		res.json({ message: "invalid cluster" }, 400)
+	# VALIDATE PARAMETERS
+	errors = req.validationErrors()
+
+	# INVALID PARAMETERS
+	if errors
+		res.json({ message: "invalid parameters", errors: errors }, 400)
 		return
 
-	client.HGETALL keys.cluster(data.cluster), (error, description) ->
+	# VALID PARAMETERS
+	cluster = req.params.cluster
+
+	client.HGETALL keys.cluster_description(cluster), (error, description) ->
 		if error
 			res.json({ message: "internal error" }, 500)
 			return
@@ -89,7 +91,10 @@ exports.show = (req, res) ->
 		if not description
 			res.json({ message: "cluster not found" }, 404)
 			return
+		else
+			res.json(description, 200)
 
+		###
 		client.SMEMBERS keys.components(data.cluster), (error, components) ->
 
 			cmds = []
@@ -103,3 +108,4 @@ exports.show = (req, res) ->
 					return
 
 				res.json({ description: description, components: replies }, 200)
+		###

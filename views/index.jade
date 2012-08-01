@@ -11,33 +11,45 @@ html(lang="en")
 					input(type="text", placeholder="Organization", name="organization").span3
 					input(type="text", placeholder="Email", name="email").span3
 					input(type="password", placeholder="Password", name="password").span3
-					button(type="submit").btn.btn-primary Registrarse
+					button(type="submit").btn.btn-primary Register
 
 			div.row.span12
 				form(method="POST", action="/auth/login").well.form#form-login
 					input(type="text", placeholder="Email", name="email")
 					input(type="password", placeholder="Password", name="password")
-					button(type="submit").btn Ingresar
+					button(type="submit").btn.btn-primary Login
 
 			div.row.span12
 				form(method="GET", action="/auth/activate/").well.form#form-activate
 					input(type="text", placeholder="Key Activate", name="key")
-					button(type="submit").btn Activar
+					button(type="submit").btn.btn-primary Activate
 
 			div.row.span12
-				form(method="POST", action="/clusters").well.form#form-clusters
+				form(method="POST", action="/projects").well.form#form-projects
 					input(type="text", placeholder="Name", name="name").span3
-					input(type="text", placeholder="Url", name="url").span3
 					input(type="text", placeholder="Acronym", name="acronym").span3
 					input(type="text", placeholder="Segment", name="segment").span3
 					textarea(placeholder="Description", name="description").span3
-					input(type="text", placeholder="City", name="city").span3
-					input(type="text", placeholder="State", name="state").span3
+					input(type="text", placeholder="Url", name="url").span3
 					input(type="text", placeholder="Country", name="country").span3
-					button(type="submit").btn.btn-primary Crear
+					input(type="text", placeholder="State", name="state").span3
+					input(type="text", placeholder="City", name="city").span3
+					button(type="submit").btn.btn-primary New Project
 
 			div.row.span12
-				form(method="POST", action="/clusters/components").well.form#form-components
+				form(method="POST", action="/clusters").well.form#form-clusters
+					input(type="text", placeholder="Project", name="project").span3
+					input(type="text", placeholder="Name", name="name").span3
+					input(type="text", placeholder="Status", name="status").span3
+					input(type="text", placeholder="Area", name="area").span3
+					textarea(placeholder="Description", name="description").span3
+					input(type="text", placeholder="Vendor", name="vendor").span3
+					input(type="text", placeholder="Initiation", name="initiation").span3
+					button(type="submit").btn.btn-primary New Cluster
+
+
+			div.row.span12
+				form(method="POST", action="/components").well.form#form-components
 					input(type="text", placeholder="Id Cluster", name="cluster").span3
 					input(type="text", placeholder="Name", name="name").span3
 					input(type="text", placeholder="Model", name="model").span3
@@ -56,8 +68,26 @@ html(lang="en")
 					input(type="text", placeholder="Primary Operating System", name="primary_operating_system").span3
 					input(type="text", placeholder="Primary Interconection", name="primary_interconection").span3
 					input(type="text", placeholder="Memory per Node (MB)", name="memory_node").span3
+					button(type="submit").btn.btn-primary New Component
 
-					button(type="submit").btn.btn-primary Crear
+			div.row.span12
+				form(method="POST", action="/linpacks").well.form#form-linpacks
+					input(type="text", placeholder="Id Cluster", name="cluster").span3
+					input(type="text", placeholder="Title", name="title").span3
+					input(type="text", placeholder="Benchmark Date", name="benchmark_date").span3
+					input(type="text", placeholder="Cores", name="cores").span3
+					input(type="text", placeholder="GPU Cores", name="gpu_cores").span3
+					input(type="text", placeholder="RMax", name="rmax").span3
+					input(type="text", placeholder="RPeak", name="rpeak").span3
+					input(type="text", placeholder="NMax", name="nmax").span3
+					input(type="text", placeholder="NHalf", name="nhalf").span3
+					input(type="text", placeholder="Compiler Name", name="compiler_name").span3
+					input(type="text", placeholder="Compiler Options", name="compiler_options").span3
+					input(type="text", placeholder="Math Library", name="math_library").span3
+					input(type="text", placeholder="MPI Library", name="mpi_library").span3
+					textarea(placeholder="HPL Input", name="hpl_input").span3
+					textarea(placeholder="HPL Output", name="hpl_output").span3
+					button(type="submit").btn.btn-primary New Linpack
 
 
 		script
@@ -142,6 +172,33 @@ html(lang="en")
 					return false;
 				});
 
+				$("#form-projects").submit(function() {
+					$.ajax({
+						data: $(this).serialize(),
+						url : $(this).attr("action"),
+						type: $(this).attr("method"),
+						statusCode: {
+							200: function(data) { // cluster created successful
+								alert(data.message);
+							},
+							400: function(xhr) { // invalid parameters
+								var data = JSON.parse(xhr.responseText);
+
+								alert(data.message);
+							},
+							401: function(xhr) { // not authenticated
+								var data = JSON.parse(xhr.responseText);
+
+								alert(data.message);
+							},
+							500: function() { // internal error
+								alert("internal error");
+							}
+						}
+					});
+					return false;
+				});
+
 				$("#form-clusters").submit(function() {
 					$.ajax({
 						data: $(this).serialize(),
@@ -170,6 +227,33 @@ html(lang="en")
 				});
 
 				$("#form-components").submit(function() {
+					$.ajax({
+						data: $(this).serialize(),
+						url : $(this).attr("action"),
+						type: $(this).attr("method"),
+						statusCode: {
+							200: function(data) { // cluster created successful
+								alert(data.message);
+							},
+							400: function(xhr) { // invalid parameters
+								var data = JSON.parse(xhr.responseText);
+
+								alert(data.message);
+							},
+							401: function(xhr) { // not authenticated
+								var data = JSON.parse(xhr.responseText);
+
+								alert(data.message);
+							},
+							500: function() { // internal error
+								alert("internal error");
+							}
+						}
+					});
+					return false;
+				});
+
+				$("#form-linpacks").submit(function() {
 					$.ajax({
 						data: $(this).serialize(),
 						url : $(this).attr("action"),

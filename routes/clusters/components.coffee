@@ -74,13 +74,13 @@ exports.create = (req, res) ->
 				res.json({ message: "internal error" }, 500)
 				return
 
-			client.HMSET keys.component(id), data, (error) ->
+			client.HMSET keys.component_description(id), data, (error) ->
 
 				if error
 					res.json({ message: "internal error" }, 500)
 					return
 
-				client.SADD keys.components(cluster), id, (error) ->
+				client.SADD keys.cluster_components(cluster), id, (error) ->
 					if error
 						res.json({ message: "internal error" }, 500)
 					else
@@ -89,18 +89,27 @@ exports.create = (req, res) ->
 
 exports.show = (req, res) ->
 
-	options = [
-		["component", "integer"]
-	]
+	req.assert("component").isInt()
 
-	data = validate.validate(options, req.params)
+	# VALIDATE PARAMETERS
+	errors = req.validationErrors()
 
-	if not data
-		res.json({ message: "invalid params" }, 400)
+	# INVALID PARAMETERS
+	if errors
+		res.json({ message: "invalid parameters", errors: errors }, 400)
 		return
 
-	client.HGETALL keys.component(data.component), (error, data) ->
+	# VALID PARAMETERS
+
+	component = req.params.component
+
+	client.HGETALL keys.component_description(component), (error, data) ->
+		# ERROR
 		if error
 			res.json({ message: "internal error" }, 500)
+
+		# COMPONENT NOT FOUND
+		if not data
+			res.json({ message: "component not found" }, 404)
 		else
 			res.json(data, 200)

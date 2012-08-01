@@ -72,14 +72,14 @@
           }, 500);
           return;
         }
-        return client.HMSET(keys.component(id), data, function(error) {
+        return client.HMSET(keys.component_description(id), data, function(error) {
           if (error) {
             res.json({
               message: "internal error"
             }, 500);
             return;
           }
-          return client.SADD(keys.components(cluster), id, function(error) {
+          return client.SADD(keys.cluster_components(cluster), id, function(error) {
             if (error) {
               return res.json({
                 message: "internal error"
@@ -96,20 +96,27 @@
   };
 
   exports.show = function(req, res) {
-    var data, options;
-    options = [["component", "integer"]];
-    data = validate.validate(options, req.params);
-    if (!data) {
+    var component, errors;
+    req.assert("component").isInt();
+    errors = req.validationErrors();
+    if (errors) {
       res.json({
-        message: "invalid params"
+        message: "invalid parameters",
+        errors: errors
       }, 400);
       return;
     }
-    return client.HGETALL(keys.component(data.component), function(error, data) {
+    component = req.params.component;
+    return client.HGETALL(keys.component_description(component), function(error, data) {
       if (error) {
-        return res.json({
+        res.json({
           message: "internal error"
         }, 500);
+      }
+      if (!data) {
+        return res.json({
+          message: "component not found"
+        }, 404);
       } else {
         return res.json(data, 200);
       }
