@@ -31,7 +31,7 @@
         }, 400);
         return;
       }
-      return client.INCR(keys.key(), function(error, id) {
+      return client.INCR(keys.cluster_key(), function(error, id) {
         if (error) {
           res.json({
             message: "internal error"

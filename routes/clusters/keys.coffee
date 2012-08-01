@@ -2,16 +2,41 @@ module.exports =
 
 	app: "lartop50"
 
+
+	#        --> ...      -->  ...       -->  ...     --> LINPACK     --> ...
+	#       /            /              /            /               /
+	#  USER ---> PROJECT ---> CLUSTERS ---> CLUSTER ---> COMPONENTS ---> COMPONENT
+	#       \            \              \                            \
+	#        --> ...      -->  ...       -->  ...                     --> ...
+
+
+	# PROJECTS
+
+	project_key: (app = this.app) ->
+		"#{app}:project"
+
+	project_description: (id, app = this.app) ->
+		"#{app}:project:#{id}:description"
+
+	project_clusters: (id, app = this.app) ->
+		"#{app}:project:#{id}:clusters"
+
+	user_projects: (uid, app = this.app) ->
+		"#{app}:uid:#{uid}:projects"
+
 	# CLUSTERS
 
 	cluster_key: (app = this.app) ->
 		"#{app}:cluster"
 
-	cluster: (id, app = this.app) ->
+	cluster_description: (id, app = this.app) ->
 		"#{app}:cluster:#{id}:description"
 
-	clusters: (uid, app = this.app) ->
-		"#{app}:uid:#{uid}:clusters"
+	cluster_components: (id, app = this.app) ->
+		"#{app}:cluster:#{id}:components"
+
+	cluster_linpack: (id, app = this.app) ->
+		"#{app}:cluster:#{id}:linpack"
 
 	# COMPONENTS
 
@@ -19,10 +44,7 @@ module.exports =
 		"#{app}:component"
 
 	component: (id, app = this.app) ->
-		"#{app}:cluster:component:#{id}:"
-
-	components: (id, app = this.app) ->
-		"#{app}:cluster:#{id}:components"
+		"#{app}:component:#{id}:"
 
 	# LINPACKS
 
@@ -30,7 +52,4 @@ module.exports =
 		"#{app}:linpack"
 
 	linpack: (id, app = this.app) ->
-		"#{app}:cluster:linpack:#{id}:"
-
-	linpacks: (id, app = this.app) ->
-		"#{app}:cluster:#{id}:linpack"
+		"#{app}:linpack:#{id}:"

@@ -1,7 +1,6 @@
 redis = require("redis")
 keys = require("./keys")
 auth = require("../auth/auth")
-validate = require("../validate/validate")
 
 client = redis.createClient()
 
@@ -11,58 +10,81 @@ exports.create = (req, res) ->
 
 		# NOT AUTHENTICATED
 		if not user
-			res.json(401)
+			res.json({ message: "not authenticated" }, 401)
 			return
 
-		options = [
-			["cluster", "integer"]
-			["name", "char"]
-			["model", "char"]
-			["vendor", "char"]
-			["nodes", "integer"]
-			["processor_name", "char"]
-			["processor_model", "char"]
-			["processor_socket", "char"]
-			["processor_cores", "integer"]
-			["processor_speed", "char"]
-			["accelerator_name", "char"]
-			["accelerator_model", "char"]
-			["accelerator_number", "integer"]
-			["accelerator_cores", "integer"]
-			["accelerator_speed", "char"]
-			["primary_operatingsystem", "char"]
-			["primary_interconecton", "char"]
-			["memory_node", "integer"] # IN MB
-		]
+		req.assert("cluster").notEmpty().isInt()
+		req.assert("name").notEmpty()
+		req.assert("model").notEmpty()
+		req.assert("vendor").notEmpty()
+		req.assert("nodes").notEmpty().isInt()
+		req.assert("memory_node").notEmpty()
+		req.assert("processor_name").notEmpty()
+		req.assert("processor_model").notEmpty()
+		req.assert("processor_socket").notEmpty()
+		req.assert("processor_cores").notEmpty().isInt()
+		req.assert("processor_speed").notEmpty()
+		req.assert("accelerator_name").notEmpty()
+		req.assert("accelerator_model").notEmpty()
+		req.assert("accelerator_number").notEmpty()
+		req.assert("accelerator_cores").notEmpty().isInt()
+		req.assert("accelerator_speed").notEmpty()
+		req.assert("primary_interconection").notEmpty()
+		req.assert("primary_operating_system").notEmpty()
 
-		data = validate.validate(options, req.body)
 
-		# INVALID DATA
-		if not data
-			res.json({}, 400)
+		# VALIDATE PARAMETERS
+		errors = req.validationErrors()
+
+		# INVALID PARAMETERS
+		if errors
+			res.json({ message: "invalid parameters", errors: errors }, 400)
 			return
 
-		cluster = data.cluster
+		# VALID PARAMETERS
 
-		delete data.cluster
+		cluster = req.body.cluster
+
+		data =
+			name: req.body.name
+			model: req.body.model
+			vendor: req.body.vendor
+			nodes: req.body.nodes
+			memory_node: req.body.memory_node
+
+			processor_name: req.body.processor_name
+			processor_model: req.body.processor_model
+			processor_socket: req.body.processor_socket
+			processor_cores: req.body.processor_cores
+			processor_speed: req.body.processor_speed
+
+			accelerator_name: req.body.accelerator_name
+			accelerator_model: req.body.accelerator_model
+			accelerator_number: req.body.accelerator_number
+			accelerator_cores: req.body.accelerator_cores
+			accelerator_speed: req.body.accelerator_speed
+
+			primary_interconection: req.body.primary_interconection
+			primary_operating_system: req.body.primary_operating_system
+
 
 		client.INCR keys.component_key, (error, id) ->
 
 			if error
-				res.json({}, 500)
+				res.json({ message: "internal error" }, 500)
 				return
 
 			client.HMSET keys.component(id), data, (error) ->
 
 				if error
-					res.json({}, 500)
+					res.json({ message: "internal error" }, 500)
 					return
 
 				client.SADD keys.components(cluster), id, (error) ->
 					if error
-						res.json({}, 500)
+						res.json({ message: "internal error" }, 500)
 					else
-						res.json({}, 200)
+						res.json({ message: "component created successful" }, 200)
 
 
 exports.show = (req, res) ->
@@ -74,11 +96,11 @@ exports.show = (req, res) ->
 	data = validate.validate(options, req.params)
 
 	if not data
-		res.json({}, 400)
+		res.json({ message: "invalid params" }, 400)
 		return
 
 	client.HGETALL keys.component(data.component), (error, data) ->
 		if error
-			res.json({}, 500)
+			res.json({ message: "internal error" }, 500)
 		else
 			res.json(data, 200)

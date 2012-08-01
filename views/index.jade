@@ -25,7 +25,7 @@ html(lang="en")
 					button(type="submit").btn Activar
 
 			div.row.span12
-				form(method="POST", action="/clusters").well.form#form-cluster
+				form(method="POST", action="/clusters").well.form#form-clusters
 					input(type="text", placeholder="Name", name="name").span3
 					input(type="text", placeholder="Url", name="url").span3
 					input(type="text", placeholder="Acronym", name="acronym").span3
@@ -34,7 +34,31 @@ html(lang="en")
 					input(type="text", placeholder="City", name="city").span3
 					input(type="text", placeholder="State", name="state").span3
 					input(type="text", placeholder="Country", name="country").span3
-					button(type="submit").btn.btn-primary Registrarse
+					button(type="submit").btn.btn-primary Crear
+
+			div.row.span12
+				form(method="POST", action="/clusters/components").well.form#form-components
+					input(type="text", placeholder="Id Cluster", name="cluster").span3
+					input(type="text", placeholder="Name", name="name").span3
+					input(type="text", placeholder="Model", name="model").span3
+					input(type="text", placeholder="Vendor", name="vendor").span3
+					input(type="text", placeholder="Number of Nodes", name="nodes").span3
+					input(type="text", placeholder="Processor Name", name="processor_name").span3
+					input(type="text", placeholder="Processor Model", name="processor_model").span3
+					input(type="text", placeholder="Processor Socket", name="processor_socket").span3
+					input(type="text", placeholder="Processor Cores", name="processor_cores").span3
+					input(type="text", placeholder="Processor Speed", name="processor_speed").span3
+					input(type="text", placeholder="Accelerator Name", name="accelerator_name").span3
+					input(type="text", placeholder="Accelerator Model", name="accelerator_model").span3
+					input(type="text", placeholder="Accelerator Number", name="accelerator_number").span3
+					input(type="text", placeholder="Accelerator Cores", name="accelerator_cores").span3
+					input(type="text", placeholder="Accelerator Speed", name="accelerator_speed").span3
+					input(type="text", placeholder="Primary Operating System", name="primary_operating_system").span3
+					input(type="text", placeholder="Primary Interconection", name="primary_interconection").span3
+					input(type="text", placeholder="Memory per Node (MB)", name="memory_node").span3
+
+					button(type="submit").btn.btn-primary Crear
+
 
 		script
 			$(document).ready(function() {
@@ -118,7 +142,34 @@ html(lang="en")
 					return false;
 				});
 
-				$("#form-cluster").submit(function() {
+				$("#form-clusters").submit(function() {
+					$.ajax({
+						data: $(this).serialize(),
+						url : $(this).attr("action"),
+						type: $(this).attr("method"),
+						statusCode: {
+							200: function(data) { // cluster created successful
+								alert(data.message);
+							},
+							400: function(xhr) { // invalid parameters
+								var data = JSON.parse(xhr.responseText);
+
+								alert(data.message);
+							},
+							401: function(xhr) { // not authenticated
+								var data = JSON.parse(xhr.responseText);
+
+								alert(data.message);
+							},
+							500: function() { // internal error
+								alert("internal error");
+							}
+						}
+					});
+					return false;
+				});
+
+				$("#form-components").submit(function() {
 					$.ajax({
 						data: $(this).serialize(),
 						url : $(this).attr("action"),
