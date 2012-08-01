@@ -15,28 +15,40 @@
     options = [['activate', 'md5']];
     data = validate.validate(options, req.params);
     if (!data) {
-      res.json({}, 400);
+      res.json({
+        message: "invalid key"
+      }, 400);
       return;
     }
     return client.GET(keys.activate(data.activate), function(error, uid) {
       if (error) {
-        res.json({}, 500);
+        res.json({
+          message: "internal error"
+        }, 500);
         return;
       }
       if (!uid) {
-        res.json({}, 404);
+        res.json({
+          message: "key not found"
+        }, 404);
         return;
       }
       return client.SET(keys.active(uid), true, function(error) {
         if (error) {
-          res.json({}, 500);
+          res.json({
+            message: "internal error"
+          }, 500);
           return;
         }
         return client.DEL(keys.activate(data.activate), function(error) {
           if (error) {
-            res.json({}, 500);
+            res.json({
+              message: "internal error"
+            }, 500);
           }
-          return res.json({}, 200);
+          return res.json({
+            message: "activation successful"
+          }, 200);
         });
       });
     });

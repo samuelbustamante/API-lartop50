@@ -19,37 +19,53 @@
     options = [["email", "email"], ["password", "password"]];
     data = validate.validate(options, req.body);
     if (!data) {
-      res.json({}, 400);
+      res.json({
+        message: "invalid parameters"
+      }, 400);
       return;
     }
     return client.GET(keys.user(data.email), function(error, uid) {
       if (error) {
-        res.json({}, 500);
+        res.json({
+          message: "internal error"
+        }, 500);
         return;
       }
       if (!uid) {
-        res.json({}, 404);
+        res.json({
+          message: "user not found"
+        }, 404);
         return;
       }
       return client.GET(keys.active(uid), function(error, active) {
         if (error) {
-          res.json({}, 500);
+          res.json({
+            message: "internal error"
+          }, 500);
           return;
         }
         if (active !== "true") {
-          res.json({}, 404);
+          res.json({
+            message: "user not active"
+          }, 404);
           return;
         }
         return client.GET(keys.password(uid), function(error, realpass) {
           if (error) {
-            res.json({}, 500);
+            res.json({
+              message: "internal error"
+            }, 500);
             return;
           }
           if (md5(data.password) === realpass) {
             auth.login(req, uid);
-            return res.json({}, 200);
+            return res.json({
+              message: "successful login"
+            }, 200);
           } else {
-            return res.json({}, 404);
+            return res.json({
+              message: "invalid password"
+            }, 404);
           }
         });
       });

@@ -12,7 +12,7 @@ exports.create = (req, res) ->
 
 		# NOT AUTHENTICATED
 		if not user
-			res.json({}, 401)
+			res.json({ message: "not authenticated" }, 401)
 			return
 
 		options = [
@@ -28,26 +28,26 @@ exports.create = (req, res) ->
 
 		data = validate.validate(options, req.body)
 
-		# INVALID DATA
+		# INVALID PARAMETERS
 		if not data
-			res.json({}, 400)
+			res.json({ message: "invalida parameters" }, 400)
 			return
 
 		client.INCR keys.key(), (error, id) ->
 			if error
-				res.json({}, 500)
+				res.json({ message: "internal error" }, 500)
 				return
 
 			client.HMSET keys.cluster(id), data, (error) ->
 				if error
-					res.json({}, 500)
+					res.json({ message: "internal error" }, 500)
 					return
 
 				client.SADD keys.clusters(user), id, (error) ->
 					if error
-						res.json({}, 500)
+						res.json({ message: "internal error" }, 500)
 					else
-						res.json({}, 200)
+						res.json({ message: "cluster created successful" }, 200)
 
 
 exports.show = (req, res) ->
@@ -59,17 +59,17 @@ exports.show = (req, res) ->
 	data = validate.validate(options, req.params)
 
 	if not data
-		res.json({}, 400)
+		res.json({ message: "invalid cluster" }, 400)
 		return
 
 	client.HGETALL keys.cluster(data.cluster), (error, description) ->
 		if error
-			res.json({}, 500)
+			res.json({ message: "internal error" }, 500)
 			return
 
 		# NOT CLUSTER
 		if not description
-			res.json({}, 404)
+			res.json({ message: "cluster not found" }, 404)
 			return
 
 		client.SMEMBERS keys.components(data.cluster), (error, components) ->
@@ -81,7 +81,7 @@ exports.show = (req, res) ->
 
 			client.multi(cmds).exec (error, replies) ->
 				if error
-					res.json({}, 500)
+					res.json({ message: "internal error" }, 500)
 					return
 
 				res.json({ description: description, components: replies }, 200)

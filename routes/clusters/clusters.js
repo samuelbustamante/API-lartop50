@@ -18,30 +18,42 @@
     return auth.is_authenticated(req, function(user) {
       var data, options;
       if (!user) {
-        res.json({}, 401);
+        res.json({
+          message: "not authenticated"
+        }, 401);
         return;
       }
       options = [["url", "url"], ["name", "alphanumeric"], ["acronym", "char"], ["segment", "char"], ["description", "text"], ["city", "char"], ["state", "char"], ["country", "char"]];
       data = validate.validate(options, req.body);
       if (!data) {
-        res.json({}, 400);
+        res.json({
+          message: "invalida parameters"
+        }, 400);
         return;
       }
       return client.INCR(keys.key(), function(error, id) {
         if (error) {
-          res.json({}, 500);
+          res.json({
+            message: "internal error"
+          }, 500);
           return;
         }
         return client.HMSET(keys.cluster(id), data, function(error) {
           if (error) {
-            res.json({}, 500);
+            res.json({
+              message: "internal error"
+            }, 500);
             return;
           }
           return client.SADD(keys.clusters(user), id, function(error) {
             if (error) {
-              return res.json({}, 500);
+              return res.json({
+                message: "internal error"
+              }, 500);
             } else {
-              return res.json({}, 200);
+              return res.json({
+                message: "cluster created successful"
+              }, 200);
             }
           });
         });
@@ -54,16 +66,22 @@
     options = [["cluster", "integer"]];
     data = validate.validate(options, req.params);
     if (!data) {
-      res.json({}, 400);
+      res.json({
+        message: "invalid cluster"
+      }, 400);
       return;
     }
     return client.HGETALL(keys.cluster(data.cluster), function(error, description) {
       if (error) {
-        res.json({}, 500);
+        res.json({
+          message: "internal error"
+        }, 500);
         return;
       }
       if (!description) {
-        res.json({}, 404);
+        res.json({
+          message: "cluster not found"
+        }, 404);
         return;
       }
       return client.SMEMBERS(keys.components(data.cluster), function(error, components) {
@@ -75,7 +93,9 @@
         }
         return client.multi(cmds).exec(function(error, replies) {
           if (error) {
-            res.json({}, 500);
+            res.json({
+              message: "internal error"
+            }, 500);
             return;
           }
           return res.json({

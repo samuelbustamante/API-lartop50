@@ -13,29 +13,29 @@ exports.show = (req, res) ->
 	data = validate.validate(options, req.params)
 
 	if not data
-		res.json({}, 400)
+		res.json({ message: "invalid key" }, 400)
 		return
 
 	client.GET keys.activate(data.activate), (error, uid) ->
 		# ERROR
 		if error
-			res.json({}, 500)
+			res.json({ message: "internal error" }, 500)
 			return
 
 		# KEY NOT FOUND
 		if not uid
-			res.json({}, 404)
+			res.json({ message: "key not found" }, 404)
 			return
 
 		client.SET keys.active(uid), true, (error) ->
 			# ERROR
 			if error
-				res.json({}, 500)
+				res.json({ message: "internal error" }, 500)
 				return
 
 			client.DEL keys.activate(data.activate), (error) ->
 				# ERROR
 				if error
-					res.json({}, 500)
+					res.json({ message: "internal error" }, 500)
 				# DELETE ACTIVATE KEY
-				res.json({}, 200)
+				res.json({ message: "activation successful" }, 200)

@@ -20,31 +20,37 @@
     data = validate.validate(options, req.body);
     if (!data) {
       res.json({
-        message: "datos inválidos."
+        message: "invalid parameters"
       }, 400);
       return;
     }
     return client.GET(keys.user(data.email), function(error, uid) {
       if (uid) {
         res.json({
-          message: "correo electrónico en uso."
+          message: "email is already in use"
         }, 410);
         return;
       }
       return client.INCR(keys.key(), function(error, uid) {
         if (error) {
-          res.json({}, 500);
+          res.json({
+            message: "internal error"
+          }, 500);
           return;
         }
         return client.SET(keys.user(data.email), uid, function(error) {
           if (error) {
-            res.json({}, 500);
+            res.json({
+              message: "internal error"
+            }, 500);
             return;
           }
           return client.SET(keys.password(uid), md5(data.password), function(error) {
             var profile;
             if (error) {
-              res.json({}, 500);
+              res.json({
+                message: "internal error"
+              }, 500);
               return;
             }
             profile = {
@@ -53,28 +59,35 @@
             };
             return client.HMSET(keys.profile(uid), profile, function(error) {
               if (error) {
-                res.json({}, 500);
+                res.json({
+                  message: "internal error"
+                }, 500);
                 return;
               }
               return client.SET(keys.active(uid), false, function(error) {
                 var key;
                 if (error) {
-                  res.json({}, 500);
+                  res.json({
+                    message: "internal error"
+                  }, 500);
                   return;
                 }
                 key = md5(Date() + data.email);
                 return client.SET(keys.activate(key), uid, function(error) {
                   if (error) {
-                    res.json({}, 500);
+                    res.json({
+                      message: "internal error"
+                    }, 500);
                     return;
                   }
                   return email.send_activate_key(data.email, key, function(error) {
                     if (error) {
-                      res.json({}, 500);
-                      return console.log(error);
+                      return res.json({
+                        message: "internal error"
+                      }, 500);
                     } else {
                       return res.json({
-                        message: "registración exitosa."
+                        message: "successful registration"
                       }, 200);
                     }
                   });

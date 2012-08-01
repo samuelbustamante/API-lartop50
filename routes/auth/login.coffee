@@ -16,38 +16,38 @@ exports.create = (req, res) ->
 	data = validate.validate(options, req.body)
 
 	if !data
-		res.json({}, 400)
+		res.json({ message: "invalid parameters" }, 400)
 		return
 
 	client.GET keys.user(data.email), (error, uid) ->
 		# ERROR
 		if error
-			res.json({}, 500)
+			res.json({ message: "internal error" }, 500)
 			return
 		# USER NOT FOUND
 		if not uid
-			res.json({}, 404)
+			res.json({ message: "user not found" }, 404)
 			return
 
 		client.GET keys.active(uid), (error, active) ->
 			# ERROR
 			if error
-				res.json({}, 500)
+				res.json({ message: "internal error" }, 500)
 				return
 			# USER NOT ACTIVE
 			if active isnt "true"
-				res.json({}, 404)
+				res.json({ message: "user not active" }, 404)
 				return
 
 			client.GET keys.password(uid), (error, realpass) ->
 				# ERROR
 				if error
-					res.json({}, 500)
+					res.json({ message: "internal error" }, 500)
 					return
 				# CHECK PASSWORDS
 				if md5(data.password) is realpass
 					# ACTIVE SESSION
 					auth.login(req, uid)
-					res.json({}, 200)
+					res.json({ message: "successful login" }, 200)
 				else
-					res.json({}, 404)
+					res.json({ message: "invalid password" }, 404)
