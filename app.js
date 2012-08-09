@@ -31,23 +31,18 @@ app.configure('production', function(){
   app.use(express.errorHandler());
 });
 
-// INDEX
-app.resource('', require('./routes/index'));
-
 // AUTH
-app.resource('auth/login', require('./routes/auth/login'));
-app.resource('auth/register', require('./routes/auth/register'));
-app.resource('auth/activate', require('./routes/auth/activate'));
+app.resource('api/auth/login',    require('./routes/auth/login'));
+app.resource('api/auth/register', require('./routes/auth/register'));
+app.resource('api/auth/activate', require('./routes/auth/activate'));
+app.resource('api/auth/profiles', require('./routes/auth/profiles'));
 
-// PROFILES
-app.resource('profiles', require('./routes/profiles/profiles'));
+// USER
+app.resource('/api/user/sites/', require('./routes/clusters/projects'));
+app.resource('/api/user/machines/', require('./routes/clusters/clusters'));
+app.resource('/api/user/linpacks/', require('./routes/clusters/linpacks'));
+app.resource('/api/user/components/', require('./routes/clusters/components'));
 
-// CLUSTERS
-app.resource('clusters', require('./routes/clusters/clusters'));
-app.resource('projects', require('./routes/clusters/projects'));
-app.resource('linpacks', require('./routes/clusters/linpacks'));
-app.resource('components', require('./routes/clusters/components'));
-
-app.listen(3000, function(){
+app.listen(3001, function(){
   console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
 });

@@ -2,24 +2,28 @@ md5 = require("MD5")
 auth = require("./auth")
 keys = require("./keys")
 redis = require("redis")
-validate = require("../validate/validate")
 
 client = redis.createClient()
 
 exports.create = (req, res) ->
 
-	options = [
-		["email", "email"]
-		["password", "password"]
-	]
+	# VALIDATORS
+	req.assert("email").isEmail()
+	req.assert("password").notEmpty()
 
-	data = validate.validate(options, req.body)
+	# VALIDATE PARAMETERS
+	errors = req.validationErrors()
 
-	if !data
-		res.json({ message: "invalid parameters" }, 400)
+	# INVALID PARAMETERS
+	if errors
+		res.json({ message: "invalid parameters", errors: errors }, 400)
 		return
 
-	client.GET keys.user(data.email), (error, uid) ->
+	# VALID PARAMETERS
+	email = req.body.email
+	password = req.body.password
+
+	client.GET keys.user(email), (error, uid) ->
 		# ERROR
 		if error
 			res.json({ message: "internal error" }, 500)
@@ -45,7 +49,7 @@ exports.create = (req, res) ->
 					res.json({ message: "internal error" }, 500)
 					return
 				# CHECK PASSWORDS
-				if md5(data.password) is realpass
+				if md5(password) is realpass
 					# ACTIVE SESSION
 					auth.login(req, uid)
 					res.json({ message: "successful login" }, 200)

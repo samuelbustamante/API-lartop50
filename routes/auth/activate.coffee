@@ -1,22 +1,24 @@
 keys = require("./keys")
 redis = require("redis")
-validate = require("../validate/validate")
 
 client = redis.createClient()
 
-exports.show = (req, res) ->
+exports.create = (req, res) ->
 
-	options = [
-		['activate', 'md5']
-	]
+	req.assert("key").is(/^[0-9a-z]{32}$/)
 
-	data = validate.validate(options, req.params)
+	# VALIDATE PARAMETERS
+	errors = req.validationErrors()
 
-	if not data
-		res.json({ message: "invalid key" }, 400)
+	# INVALID PARAMETERS
+	if errors
+		res.json({ message: "invalid parameters", errors: errors }, 400)
 		return
 
-	client.GET keys.activate(data.activate), (error, uid) ->
+	# VALID PARAMETERS
+	key = req.body.key
+
+	client.GET keys.activate(key), (error, uid) ->
 		# ERROR
 		if error
 			res.json({ message: "internal error" }, 500)
@@ -33,7 +35,7 @@ exports.show = (req, res) ->
 				res.json({ message: "internal error" }, 500)
 				return
 
-			client.DEL keys.activate(data.activate), (error) ->
+			client.DEL keys.activate(key), (error) ->
 				# ERROR
 				if error
 					res.json({ message: "internal error" }, 500)

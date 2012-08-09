@@ -1,28 +1,35 @@
 md5 = require("MD5")
 keys = require("./keys")
 redis = require("redis")
-email = require("./email")
-validate = require("../validate/validate")
+server_email = require("./email")
 
 client = redis.createClient()
 
 exports.create = (req, res) ->
 
-	options = [
-		["email", "email"]
-		["password", "password"]
-		["name", "char"]
-		["organization", "char"]
-	]
+	req.assert("name").notEmpty()
+	req.assert("email").isEmail()
+	req.assert("password").notEmpty()
+	req.assert("organization").notEmpty()
 
-	data = validate.validate(options, req.body)
+	# VALIDATE PARAMETERS
+	errors = req.validationErrors()
 
-	if !data
-		res.json({ message: "invalid parameters" }, 400)
+	# INVALID PARAMETERS
+	if errors
+		res.json({ message: "invalid parameters", errors: errors }, 400)
 		return
 
+	# VALID PARAMETERS
+	email = req.body.email
+	password = req.body.password
+	profile =
+		name:	req.body.name
+		organization: req.body.organization
+
+
 	# CHECK EXISTING EMAIL
-	client.GET keys.user(data.email), (error, uid) ->
+	client.GET keys.user(email), (error, uid) ->
 		# EMAIL IS ALREADY IN USE
 		if uid
 			res.json({ message: "email is already in use" }, 410)
@@ -35,19 +42,15 @@ exports.create = (req, res) ->
 				return
 
 			# REGISTER USER
-			client.SET keys.user(data.email), uid, (error) ->
+			client.SET keys.user(email), uid, (error) ->
 				if error
 					res.json({ message: "internal error" }, 500)
 					return
 
-				client.SET keys.password(uid), md5(data.password), (error) ->
+				client.SET keys.password(uid), md5(password), (error) ->
 					if error
 						res.json({ message: "internal error" }, 500)
 						return
-
-					profile =
-						name: data.name
-						organization: data.organization
 
 					client.HMSET keys.profile(uid), profile, (error) ->
 					# ERROR
@@ -62,18 +65,15 @@ exports.create = (req, res) ->
 								return
 
 							# GENERATE KEY
-							key = md5(Date() + data.email)
+							key = md5(Date() + email)
 
 							client.SET keys.activate(key), uid, (error) ->
 								if error
 									res.json({ message: "internal error" }, 500)
-									return
+								else
+									res.json({message: "successful registration"}, 200)
 
 								# SEND EMAIL
-								email.send_activate_key data.email, key, (error) ->
-									# EMAIL NOT SEND
-									if error
-										res.json({ message: "internal error" }, 500)
-									# EMAIL SEND
-									else
-										res.json({message: "successful registration"}, 200)
+								server_email.send_activate_key email, key, (error) ->
+									console.log(key)
+
