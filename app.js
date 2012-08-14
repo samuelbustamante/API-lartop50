@@ -31,18 +31,22 @@ app.configure('production', function(){
   app.use(express.errorHandler());
 });
 
+// VIEW
+app.resource('/', require('./routes/views/index'));
+app.resource('ingresar', require('./routes/views/login'));
+
 // AUTH
 app.resource('api/auth/login',    require('./routes/auth/login'));
 app.resource('api/auth/register', require('./routes/auth/register'));
 app.resource('api/auth/activate', require('./routes/auth/activate'));
 app.resource('api/auth/profiles', require('./routes/auth/profiles'));
 
-// USER
-app.resource('/api/user/sites/', require('./routes/clusters/projects'));
-app.resource('/api/user/machines/', require('./routes/clusters/clusters'));
-app.resource('/api/user/linpacks/', require('./routes/clusters/linpacks'));
-app.resource('/api/user/components/', require('./routes/clusters/components'));
+// SUBMISSION
+app.resource('api/submission/centers', require('./routes/clusters/projects'));
+app.resource('api/submission/systems/', require('./routes/clusters/clusters'));
+app.resource('api/submission/components/', require('./routes/clusters/components'));
+app.resource('api/submission/linpacks/', require('./routes/clusters/linpacks'));
 
-app.listen(3001, function(){
+app.listen(3000, function(){
   console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
 });

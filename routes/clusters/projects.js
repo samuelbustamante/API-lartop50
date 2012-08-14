@@ -24,11 +24,10 @@
       req.assert("name").notEmpty();
       req.assert("acronym").notEmpty();
       req.assert("segment").notEmpty();
-      req.assert("description").notEmpty();
-      req.assert("url").isUrl();
       req.assert("country").notEmpty();
-      req.assert("state").notEmpty();
       req.assert("city").notEmpty();
+      req.assert("url").isUrl();
+      req.assert("description").notEmpty();
       errors = req.validationErrors();
       if (errors) {
         res.json({
@@ -41,16 +40,11 @@
       data = {
         name: req.body.name,
         acronym: req.body.acronym,
-        status: req.body.status,
         segment: req.body.segment,
-        area: req.body.area,
-        description: req.body.description,
-        provider: req.body.provider,
-        initiation: req.body.initiation,
-        url: req.body.url,
         country: req.body.country,
-        state: req.body.state,
-        city: req.body.city
+        city: req.body.city,
+        url: req.body.url,
+        description: req.body.description
       };
       return client.INCR(keys.project_key(), function(error, id) {
         if (error) {
@@ -73,7 +67,8 @@
               }, 500);
             } else {
               return res.json({
-                message: "project created successful"
+                message: "project created successful",
+                data: data
               }, 200);
             }
           });
