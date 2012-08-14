@@ -11,7 +11,7 @@ var app = module.exports = express.createServer();
 // Configuration
 
 app.configure(function(){
-  app.set('views', __dirname + '/views');
+  app.set('views', __dirname + '/API-lartop50-view/views');
   app.set('view engine', 'jade');
   app.set('view options', { layout: false });
   app.use(express.bodyParser());
@@ -20,7 +20,7 @@ app.configure(function(){
   app.use(express.session({ secret: 'SECRET' }));
   app.use(express.methodOverride());
   app.use(app.router);
-  app.use(express.static(__dirname + '/public'));
+  app.use(express.static(__dirname + '/API-lartop50-view/public'));
 });
 
 app.configure('development', function(){
@@ -47,6 +47,6 @@ app.resource('api/submission/systems/', require('./routes/clusters/clusters'));
 app.resource('api/submission/components/', require('./routes/clusters/components'));
 app.resource('api/submission/linpacks/', require('./routes/clusters/linpacks'));
 
-app.listen(3000, function(){
+app.listen(3001, function(){
   console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
 });
