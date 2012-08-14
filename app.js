@@ -11,7 +11,7 @@ var app = module.exports = express.createServer();
 // Configuration
 
 app.configure(function(){
-  app.set('views', __dirname + '/API-lartop50-view/views');
+  app.set('views', __dirname + '/Admin-lartop50/views');
   app.set('view engine', 'jade');
   app.set('view options', { layout: false });
   app.use(express.bodyParser());
@@ -20,7 +20,7 @@ app.configure(function(){
   app.use(express.session({ secret: 'SECRET' }));
   app.use(express.methodOverride());
   app.use(app.router);
-  app.use(express.static(__dirname + '/API-lartop50-view/public'));
+  app.use(express.static(__dirname + '/Admin-lartop50/public'));
 });
 
 app.configure('development', function(){
