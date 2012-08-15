@@ -10,11 +10,15 @@
 
   exports.index = function(req, res) {
     return auth.is_authenticated(req, function(user) {
+      var recaptcha;
       if (user) {
         res.redirect('/');
         return;
       }
-      return res.render('login');
+      recaptcha = new Recaptcha(PUBLIC_KEY, PRIVATE_KEY);
+      return res.render('login', {
+        recaptcha_form: recaptcha.toHTML()
+      });
     });
   };
 

@@ -10,4 +10,6 @@ exports.index = (req, res) ->
 			res.redirect('/')
 			return
 
-		res.render('login')
+		recaptcha = new Recaptcha(PUBLIC_KEY, PRIVATE_KEY)
+
+		res.render('login', { recaptcha_form: recaptcha.toHTML() })
