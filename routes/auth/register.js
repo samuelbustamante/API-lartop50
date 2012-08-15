@@ -44,70 +44,73 @@
       response: req.body.recaptcha_response_field
     };
     recaptcha = new Recaptcha(PUBLIC_KEY, PRIVATE_KEY, data_recaptcha);
-    recaptcha.verify(function(success, error_code) {
+    return recaptcha.verify(function(success, error_code) {
       if (!success) {
-        return res.json({
+        res.json({
           message: "invalid recapcha",
           code: error_code
         }, 400);
-      }
-    });
-    return client.GET(keys.user(email), function(error, uid) {
-      if (uid) {
-        res.json({
-          message: "email is already in use"
-        }, 410);
         return;
       }
-      return client.INCR(keys.key(), function(error, uid) {
-        if (error) {
+      return client.GET(keys.user(email), function(error, uid) {
+        if (uid) {
           res.json({
-            message: "internal error"
-          }, 500);
+            message: "email is already in use"
+          }, 410);
           return;
         }
-        return client.SET(keys.user(email), uid, function(error) {
+        return client.INCR(keys.key(), function(error, uid) {
           if (error) {
             res.json({
               message: "internal error"
             }, 500);
             return;
           }
-          return client.SET(keys.password(uid), md5(password), function(error) {
+          return client.SET(keys.user(email), uid, function(error) {
             if (error) {
               res.json({
                 message: "internal error"
               }, 500);
               return;
             }
-            return client.HMSET(keys.profile(uid), profile, function(error) {
+            return client.SET(keys.password(uid), md5(password), function(error) {
               if (error) {
                 res.json({
                   message: "internal error"
                 }, 500);
                 return;
               }
-              return client.SET(keys.active(uid), false, function(error) {
-                var key;
+              return client.HMSET(keys.profile(uid), profile, function(error) {
                 if (error) {
                   res.json({
                     message: "internal error"
                   }, 500);
                   return;
                 }
-                key = md5(Date() + email);
-                return client.SET(keys.activate(key), uid, function(error) {
+                return client.SET(keys.active(uid), false, function(error) {
+                  var key;
                   if (error) {
                     res.json({
                       message: "internal error"
                     }, 500);
-                  } else {
-                    res.json({
-                      message: "successful registration"
-                    }, 200);
+                    return;
                   }
-                  return server_email.send_activate_key(email, key, function(error) {
-                    return console.log(key);
+                  key = md5(Date() + email);
+                  return client.SET(keys.activate(key), uid, function(error) {
+                    if (error) {
+                      res.json({
+                        message: "internal error"
+                      }, 500);
+                    } else {
+                      res.json({
+                        message: "successful registration"
+                      }, 200);
+                    }
+                    return server_email.send_activate_key(email, key, function(error) {
+                      if (error) {
+                        return console.log(error);
+                      }
+                    });
                   });
                 });
               });

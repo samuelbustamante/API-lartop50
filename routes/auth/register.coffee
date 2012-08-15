@@ -43,53 +43,54 @@ exports.create = (req, res) ->
 	recaptcha.verify (success, error_code) ->
 		if !success
 			res.json({ message: "invalid recapcha", code: error_code }, 400)
-
-	# CHECK EXISTING EMAIL
-	client.GET keys.user(email), (error, uid) ->
-		# EMAIL IS ALREADY IN USE
-		if uid
-			res.json({ message: "email is already in use" }, 410)
 			return
 
-		client.INCR keys.key(), (error, uid) ->
-			# ERROR
-			if error
-				res.json({ message: "internal error" }, 500)
+		# CHECK EXISTING EMAIL
+		client.GET keys.user(email), (error, uid) ->
+			# EMAIL IS ALREADY IN USE
+			if uid
+				res.json({ message: "email is already in use" }, 410)
 				return
 
-			# REGISTER USER
-			client.SET keys.user(email), uid, (error) ->
+			client.INCR keys.key(), (error, uid) ->
+				# ERROR
 				if error
 					res.json({ message: "internal error" }, 500)
 					return
 
-				client.SET keys.password(uid), md5(password), (error) ->
+				# REGISTER USER
+				client.SET keys.user(email), uid, (error) ->
 					if error
 						res.json({ message: "internal error" }, 500)
 						return
 
-					client.HMSET keys.profile(uid), profile, (error) ->
-					# ERROR
+					client.SET keys.password(uid), md5(password), (error) ->
 						if error
 							res.json({ message: "internal error" }, 500)
 							return
 
-						client.SET keys.active(uid), false, (error) ->
-							# ERROR
+						client.HMSET keys.profile(uid), profile, (error) ->
+						# ERROR
 							if error
 								res.json({ message: "internal error" }, 500)
 								return
 
-							# GENERATE KEY
-							key = md5(Date() + email)
-
-							client.SET keys.activate(key), uid, (error) ->
+							client.SET keys.active(uid), false, (error) ->
+								# ERROR
 								if error
 									res.json({ message: "internal error" }, 500)
-								else
-									res.json({message: "successful registration"}, 200)
+									return
 
-								# SEND EMAIL
-								server_email.send_activate_key email, key, (error) ->
-									console.log(key)
+								# GENERATE KEY
+								key = md5(Date() + email)
 
+								client.SET keys.activate(key), uid, (error) ->
+									if error
+										res.json({ message: "internal error" }, 500)
+									else
+										res.json({message: "successful registration"}, 200)
+
+									# SEND EMAIL
+									server_email.send_activate_key email, key, (error) ->
+										if error
+											console.log(error)
