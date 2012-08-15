@@ -6,7 +6,7 @@
 
   exports.create = function(req, res) {
     return auth.is_authenticated(req, function(user) {
-      if (!user) {
+      if (user) {
         auth.logout(req);
         return res.json({
           message: "logout successful"
