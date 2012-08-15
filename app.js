@@ -6,10 +6,6 @@
 var express = require('express');
 var Resource = require('express-resource');
 var Validator = require('express-validator');
-var Recaptcha = require('recaptcha').Recaptcha;
-
-var PUBLIC_KEY  = '';
-var PRIVATE_KEY = '';
 
 var app = module.exports = express.createServer();
 

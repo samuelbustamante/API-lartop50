@@ -1,5 +1,9 @@
 redis = require("redis")
 auth = require("../auth/auth")
+Recaptcha = require('recaptcha').Recaptcha
+
+PUBLIC_KEY  = ''
+PRIVATE_KEY = ''
 
 client = redis.createClient()
 
