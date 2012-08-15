@@ -2,6 +2,10 @@ md5 = require("MD5")
 keys = require("./keys")
 redis = require("redis")
 server_email = require("./email")
+Recaptcha = require('recaptcha').Recaptcha
+
+PUBLIC_KEY  = ''
+PRIVATE_KEY = ''
 
 client = redis.createClient()
 
@@ -27,6 +31,18 @@ exports.create = (req, res) ->
 		name:	req.body.name
 		organization: req.body.organization
 
+	# DATA RECAPTCHA
+	data_recaptcha =
+		remoteip:  req.connection.remoteAddress
+		challenge: req.body.recaptcha_challenge_field
+		response:  req.body.recaptcha_response_field
+
+	# VALIDATE RECAPTCHA
+	recaptcha = new Recaptcha(PUBLIC_KEY, PRIVATE_KEY, data_recaptcha)
+
+	recaptcha.verify (success, error_code) ->
+		if !success
+			res.json({ message: "invalid recapcha", code: error_code }, 400)
 
 	# CHECK EXISTING EMAIL
 	client.GET keys.user(email), (error, uid) ->
