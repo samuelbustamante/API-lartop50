@@ -38,6 +38,7 @@ app.resource('ingresar', require('./routes/views/login'));
 
 // AUTH
 app.resource('api/auth/login',    require('./routes/auth/login'));
+app.resource('api/auth/logout',    require('./routes/auth/logout'));
 app.resource('api/auth/register', require('./routes/auth/register'));
 app.resource('api/auth/activate', require('./routes/auth/activate'));
 app.resource('api/auth/profiles', require('./routes/auth/profiles'));
