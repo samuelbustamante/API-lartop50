@@ -52,7 +52,7 @@ exports.create = (req, res) ->
 					res.json({ message: "internal error" }, 500)
 					return
 
-				redis.client.SADD keys.system_centers(system), id, (error) ->
+				redis.client.SADD keys.center_systems(system), id, (error) ->
 					if error
 						res.json({ message: "internal error" }, 500)
 						return
