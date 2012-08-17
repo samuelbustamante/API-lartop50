@@ -1,6 +1,6 @@
 auth = require("../auth/auth")
 keys_auth = require("../auth/keys")
-keys_clusters = require("../clusters/keys")
+keys_clusters = require("../submissions/keys")
 
 # REDIS
 redis = require("redis")

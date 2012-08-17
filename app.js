@@ -33,8 +33,8 @@ app.configure('production', function(){
 });
 
 // VIEW
-//app.resource('/', require('./routes/views/index'));
-//app.resource('ingresar', require('./routes/views/login'));
+app.resource('/', require('./routes/views/index'));
+app.resource('ingresar', require('./routes/views/login'));
 
 // AUTH
 app.resource('api/auth/login', require('./routes/auth/login'));

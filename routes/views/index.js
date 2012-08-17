@@ -6,7 +6,7 @@
 
   keys_auth = require("../auth/keys");
 
-  keys_clusters = require("../clusters/keys");
+  keys_clusters = require("../submissions/keys");
 
   redis = require("redis");
 
