@@ -102,7 +102,7 @@ exports.show = (req, res) ->
 					res.json({ message: "center not found" }, 404)
 					return
 
-					client.SMEMBERS keys.center_systems(center), (error, systems) ->
+					redis.client.SMEMBERS keys.center_systems(center), (error, systems) ->
 
 						cmds = []
 

@@ -112,7 +112,7 @@
               message: "center not found"
             }, 404);
             return;
-            return client.SMEMBERS(keys.center_systems(center), function(error, systems) {
+            return redis.client.SMEMBERS(keys.center_systems(center), function(error, systems) {
               var cmds, system, _i, _len;
               cmds = [];
               for (_i = 0, _len = systems.length; _i < _len; _i++) {
