@@ -37,7 +37,7 @@ exports.create = (req, res) ->
 				return
 
 			# VALID PARAMETERS
-			system = req.body.system
+			center = req.body.center
 			data =
 				id: id
 				name: req.body.name
@@ -52,7 +52,7 @@ exports.create = (req, res) ->
 					res.json({ message: "internal error" }, 500)
 					return
 
-				redis.client.SADD keys.center_systems(system), id, (error) ->
+				redis.client.SADD keys.center_systems(center), id, (error) ->
 					if error
 						res.json({ message: "internal error" }, 500)
 						return
