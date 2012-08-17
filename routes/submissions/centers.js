@@ -114,34 +114,34 @@
               message: "center not found"
             }, 404);
             return;
-            return redis.client.SMEMBERS(keys.center_systems(center), function(error, systems) {
-              var cmds, system, _i, _len;
-              console.log(3);
-              cmds = [];
-              for (_i = 0, _len = systems.length; _i < _len; _i++) {
-                system = systems[_i];
-                cmds.push(['HGETALL', keys.system_description(system)]);
-              }
-              return redis.client.multi(cmds).exec(function(error, replies) {
-                var data;
-                console.log(4);
-                if (error) {
-                  return res.json({
-                    message: "internal error"
-                  }, 500);
-                } else {
-                  data = {
-                    description: description,
-                    systems: systems
-                  };
-                  return res.json({
-                    message: "successfull",
-                    data: data
-                  }, 200);
-                }
-              });
-            });
           }
+          return redis.client.SMEMBERS(keys.center_systems(center), function(error, systems) {
+            var cmds, system, _i, _len;
+            console.log(3);
+            cmds = [];
+            for (_i = 0, _len = systems.length; _i < _len; _i++) {
+              system = systems[_i];
+              cmds.push(['HGETALL', keys.system_description(system)]);
+            }
+            return redis.client.multi(cmds).exec(function(error, replies) {
+              var data;
+              console.log(4);
+              if (error) {
+                return res.json({
+                  message: "internal error"
+                }, 500);
+              } else {
+                data = {
+                  description: description,
+                  systems: systems
+                };
+                return res.json({
+                  message: "successfull",
+                  data: data
+                }, 200);
+              }
+            });
+          });
         });
       });
     });

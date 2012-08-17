@@ -104,22 +104,22 @@ exports.show = (req, res) ->
 					res.json({ message: "center not found" }, 404)
 					return
 
-					redis.client.SMEMBERS keys.center_systems(center), (error, systems) ->
-						console.log(3)
+				redis.client.SMEMBERS keys.center_systems(center), (error, systems) ->
+					console.log(3)
 
-						cmds = []
+					cmds = []
 
-						for system in systems
-							cmds.push(['HGETALL', keys.system_description(system)])
+					for system in systems
+						cmds.push(['HGETALL', keys.system_description(system)])
 
-						redis.client.multi(cmds).exec (error, replies) ->
-							console.log(4)
-							# ERROR
-							if error
-								res.json({ message: "internal error" }, 500)
-							else
-								data =
-									description: description
-									systems: systems
+					redis.client.multi(cmds).exec (error, replies) ->
+						console.log(4)
+						# ERROR
+						if error
+							res.json({ message: "internal error" }, 500)
+						else
+							data =
+								description: description
+								systems: systems
 
-								res.json({ message: "successfull", data: data }, 200)
+							res.json({ message: "successfull", data: data }, 200)
