@@ -3,53 +3,59 @@
 
   module.exports = {
     app: "lartop50",
-    project_key: function(app) {
+    center_key: function(app) {
       if (app == null) {
         app = this.app;
       }
-      return "" + app + ":project";
+      return "" + app + ":center";
     },
-    project_description: function(id, app) {
+    center_description: function(id, app) {
       if (app == null) {
         app = this.app;
       }
-      return "" + app + ":project:" + id + ":description";
+      return "" + app + ":center:" + id + ":description";
     },
-    project_clusters: function(id, app) {
+    center_systems: function(id, app) {
       if (app == null) {
         app = this.app;
       }
-      return "" + app + ":project:" + id + ":clusters";
+      return "" + app + ":center:" + id + ":systems";
     },
-    user_projects: function(uid, app) {
+    user_centers: function(uid, app) {
       if (app == null) {
         app = this.app;
       }
-      return "" + app + ":uid:" + uid + ":projects";
+      return "" + app + ":uid:" + uid + ":centers";
     },
-    cluster_key: function(app) {
+    system_key: function(app) {
       if (app == null) {
         app = this.app;
       }
-      return "" + app + ":cluster";
+      return "" + app + ":system";
     },
-    cluster_description: function(id, app) {
+    system_description: function(id, app) {
       if (app == null) {
         app = this.app;
       }
-      return "" + app + ":cluster:" + id + ":description";
+      return "" + app + ":system:" + id + ":description";
     },
-    cluster_components: function(id, app) {
+    system_components: function(id, app) {
       if (app == null) {
         app = this.app;
       }
-      return "" + app + ":cluster:" + id + ":components";
+      return "" + app + ":system:" + id + ":components";
     },
-    cluster_linpack: function(id, app) {
+    system_linpack: function(id, app) {
       if (app == null) {
         app = this.app;
       }
-      return "" + app + ":cluster:" + id + ":linpack";
+      return "" + app + ":system:" + id + ":linpack";
+    },
+    user_systems: function(uid, app) {
+      if (app == null) {
+        app = this.app;
+      }
+      return "" + app + ":uid:" + uid + ":systems";
     },
     component_key: function(app) {
       if (app == null) {

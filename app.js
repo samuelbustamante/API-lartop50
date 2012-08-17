@@ -33,21 +33,21 @@ app.configure('production', function(){
 });
 
 // VIEW
-app.resource('/', require('./routes/views/index'));
-app.resource('ingresar', require('./routes/views/login'));
+//app.resource('/', require('./routes/views/index'));
+//app.resource('ingresar', require('./routes/views/login'));
 
 // AUTH
-app.resource('api/auth/login',    require('./routes/auth/login'));
-app.resource('api/auth/logout',    require('./routes/auth/logout'));
+app.resource('api/auth/login', require('./routes/auth/login'));
+app.resource('api/auth/logout', require('./routes/auth/logout'));
 app.resource('api/auth/register', require('./routes/auth/register'));
 app.resource('api/auth/activate', require('./routes/auth/activate'));
 app.resource('api/auth/profiles', require('./routes/auth/profiles'));
 
 // SUBMISSION
-app.resource('api/submission/centers', require('./routes/clusters/projects'));
-app.resource('api/submission/systems/', require('./routes/clusters/clusters'));
-app.resource('api/submission/components/', require('./routes/clusters/components'));
-app.resource('api/submission/linpacks/', require('./routes/clusters/linpacks'));
+app.resource('api/submissions/centers', require('./routes/submissions/centers'));
+app.resource('api/submissions/systems', require('./routes/submissions/systems'));
+app.resource('api/submissions/linpacks', require('./routes/submissions/linpacks'));
+app.resource('api/submissions/components', require('./routes/submissions/components'));
 
 app.listen(3001, function(){
   console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
