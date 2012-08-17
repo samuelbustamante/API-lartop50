@@ -1,12 +1,9 @@
 auth = require("../auth/auth")
+redis = require("../redis/client")
 keys_auth = require("../auth/keys")
-keys_clusters = require("../submissions/keys")
+keys_submissions = require("../submissions/keys")
 
-# REDIS
-redis = require("redis")
-client = redis.createClient()
-client['Multi'] = client.multi()
-
+# AUXILIARY
 isEmpty = (obj) ->
 	response = true
 	for i in obj
@@ -21,19 +18,19 @@ exports.index = (req, res) ->
 			res.redirect('/ingresar')
 			return
 
-		client.HGETALL keys_auth.profile(user), (error, profile) ->
+		redis.client.HGETALL keys_auth.profile(user), (error, profile) ->
 			# ERROR
 			if error
 				res.end('internal error', 500)
 
-			client.SMEMBERS keys_clusters.user_projects(user), (error, members) ->
+			redis.client.SMEMBERS keys_submissions.user_centers(user), (error, members) ->
 
 				cmds = []
 
 				for member in members
-					cmds.push(['HGETALL', keys_clusters.project_description(member)])
+					cmds.push(['HGETALL', keys_submissions.center_description(member)])
 
-				client.multi(cmds).exec (error, projects) ->
+				redis.client.multi(cmds).exec (error, projects) ->
 
 					if(isEmpty(projects))
 						projects = null
