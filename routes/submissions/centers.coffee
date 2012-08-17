@@ -116,6 +116,6 @@ exports.show = (req, res) ->
 						else
 							data =
 								description: description
-								systems: systems
+								systems: replies
 
 							res.json({ message: "successfull", data: data }, 200)

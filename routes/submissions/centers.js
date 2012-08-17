@@ -129,7 +129,7 @@
               } else {
                 data = {
                   description: description,
-                  systems: systems
+                  systems: replies
                 };
                 return res.json({
                   message: "successfull",
