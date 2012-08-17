@@ -94,7 +94,6 @@
       }
       center = req.params.center;
       return redis.client.SISMEMBER(keys.user_centers(user), center, function(error, member) {
-        console.log(1);
         if (!member) {
           res.json({
             message: "center not found"
@@ -102,7 +101,6 @@
           return;
         }
         return redis.client.HGETALL(keys.center_description(center), function(error, description) {
-          console.log(2);
           if (error) {
             res.json({
               message: "internal error"
@@ -117,7 +115,6 @@
           }
           return redis.client.SMEMBERS(keys.center_systems(center), function(error, systems) {
             var cmds, system, _i, _len;
-            console.log(3);
             cmds = [];
             for (_i = 0, _len = systems.length; _i < _len; _i++) {
               system = systems[_i];
@@ -125,7 +122,6 @@
             }
             return redis.client.multi(cmds).exec(function(error, replies) {
               var data;
-              console.log(4);
               if (error) {
                 return res.json({
                   message: "internal error"

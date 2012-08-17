@@ -86,14 +86,12 @@ exports.show = (req, res) ->
 		center = req.params.center
 
 		redis.client.SISMEMBER keys.user_centers(user), center, (error, member) ->
-			console.log(1)
 			# NOT THE OWNER
 			if not member
 				res.json({ message: "center not found" }, 404)
 				return
 
 			redis.client.HGETALL keys.center_description(center), (error, description) ->
-				console.log(2)
 				# ERROR
 				if error
 					res.json({ message: "internal error" }, 500)
@@ -105,7 +103,6 @@ exports.show = (req, res) ->
 					return
 
 				redis.client.SMEMBERS keys.center_systems(center), (error, systems) ->
-					console.log(3)
 
 					cmds = []
 
@@ -113,7 +110,6 @@ exports.show = (req, res) ->
 						cmds.push(['HGETALL', keys.system_description(system)])
 
 					redis.client.multi(cmds).exec (error, replies) ->
-						console.log(4)
 						# ERROR
 						if error
 							res.json({ message: "internal error" }, 500)

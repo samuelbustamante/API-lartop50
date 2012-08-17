@@ -22,7 +22,7 @@
       req.assert("area").notEmpty();
       req.assert("description").notEmpty();
       req.assert("vendor").notEmpty();
-      req.assert("initiation").isDate();
+      req.assert("installation").isDate();
       req.assert("center").isInt();
       errors = req.validationErrors();
       if (errors) {
@@ -48,7 +48,7 @@
           area: req.body.area,
           description: req.body.description,
           vendor: req.body.vendor,
-          initiation: req.body.initiation
+          installation: req.body.installation
         };
         return redis.client.HMSET(keys.system_description(id), data, function(error) {
           if (error) {
