@@ -33,14 +33,14 @@
         return;
       }
       return redis.client.INCR(keys.system_key(), function(error, id) {
-        var data, system;
+        var center, data;
         if (error) {
           res.json({
             message: "internal error"
           }, 500);
           return;
         }
-        system = req.body.system;
+        center = req.body.center;
         data = {
           id: id,
           name: req.body.name,
@@ -57,7 +57,7 @@
             }, 500);
             return;
           }
-          return redis.client.SADD(keys.system_centers(system), id, function(error) {
+          return redis.client.SADD(keys.center_systems(center), id, function(error) {
             if (error) {
               res.json({
                 message: "internal error"
