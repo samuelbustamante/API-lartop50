@@ -40,7 +40,7 @@
           }, 500);
           return;
         }
-        center = req.body.system;
+        center = req.params.system;
         data = {
           id: id,
           name: req.body.name,
