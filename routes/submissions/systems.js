@@ -23,7 +23,7 @@
       req.assert("description").notEmpty();
       req.assert("vendor").notEmpty();
       req.assert("installation").isDate();
-      req.assert("system").isInt();
+      req.assert("center").notEmpty();
       errors = req.validationErrors();
       if (errors) {
         res.json({
@@ -40,7 +40,7 @@
           }, 500);
           return;
         }
-        center = req.params.system;
+        center = req.body.center;
         data = {
           id: id,
           name: req.body.name,
@@ -91,7 +91,7 @@
         }, 401);
         return;
       }
-      req.assert("system").isInt();
+      req.assert("system").notEmpty();
       errors = req.validationErrors();
       if (errors) {
         res.json({

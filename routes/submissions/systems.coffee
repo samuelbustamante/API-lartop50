@@ -21,7 +21,7 @@ exports.create = (req, res) ->
 		req.assert("vendor").notEmpty()
 		req.assert("installation").isDate()
 		# ID CENTER
-		req.assert("system").isInt()
+		req.assert("center").notEmpty()
 
 		# VALIDATE PARAMETERS
 		errors = req.validationErrors()
@@ -37,7 +37,7 @@ exports.create = (req, res) ->
 				return
 
 			# VALID PARAMETERS
-			center = req.params.system
+			center = req.body.center
 			data =
 				id: id
 				name: req.body.name
@@ -76,7 +76,7 @@ exports.show = (req, res) ->
 			return
 
 		# VALIDATORS
-		req.assert("system").isInt()
+		req.assert("system").notEmpty()
 
 		# VALIDATE PARAMETERS
 		errors = req.validationErrors()
