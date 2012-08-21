@@ -76,7 +76,7 @@ exports.show = (req, res) ->
 			return
 
 		# VALIDATORS
-		req.assert("system").notEmpty()
+		req.assert("system").isInt()
 
 		# VALIDATE PARAMETERS
 		errors = req.validationErrors()
@@ -89,10 +89,10 @@ exports.show = (req, res) ->
 		# VALID PARAMETERS
 		system = req.params.system
 
-		redis.client.SISMEMBER keys.user_systems(user), center, (error, member) ->
+		redis.client.SISMEMBER keys.user_systems(user), system, (error, member) ->
 			# NOT THE OWNER
 			if not member
-				res.json({ message: "center not found" }, 404)
+				res.json({ message: "system not found" }, 404)
 				return
 
 			redis.client.HGETALL keys.system_description(system), (error, description) ->

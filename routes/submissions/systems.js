@@ -91,7 +91,7 @@
         }, 401);
         return;
       }
-      req.assert("system").notEmpty();
+      req.assert("system").isInt();
       errors = req.validationErrors();
       if (errors) {
         res.json({
@@ -101,10 +101,10 @@
         return;
       }
       system = req.params.system;
-      return redis.client.SISMEMBER(keys.user_systems(user), center, function(error, member) {
+      return redis.client.SISMEMBER(keys.user_systems(user), system, function(error, member) {
         if (!member) {
           res.json({
-            message: "center not found"
+            message: "system not found"
           }, 404);
           return;
         }
