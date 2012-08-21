@@ -104,8 +104,6 @@ exports.show = (req, res) ->
 				if not description
 					res.json({ message: "system not found" }, 404)
 					return
-				else
-					res.json(description, 200)
 
 				redis.client.SMEMBERS keys.system_components(system), (error, components) ->
 

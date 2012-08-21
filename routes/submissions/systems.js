@@ -120,8 +120,6 @@
               message: "system not found"
             }, 404);
             return;
-          } else {
-            res.json(description, 200);
           }
           return redis.client.SMEMBERS(keys.system_components(system), function(error, components) {
             var cmds, component, _i, _len;
