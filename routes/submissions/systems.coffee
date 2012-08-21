@@ -37,7 +37,7 @@ exports.create = (req, res) ->
 				return
 
 			# VALID PARAMETERS
-			center = req.body.system
+			center = req.params.system
 			data =
 				id: id
 				name: req.body.name
