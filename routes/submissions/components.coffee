@@ -1,8 +1,6 @@
-redis = require("redis")
 keys = require("./keys")
 auth = require("../auth/auth")
-
-client = redis.createClient()
+redis = require("../redis/client")
 
 exports.create = (req, res) ->
 
@@ -13,7 +11,7 @@ exports.create = (req, res) ->
 			res.json({ message: "not authenticated" }, 401)
 			return
 
-		req.assert("cluster").notEmpty()
+		req.assert("system").notEmpty()
 		req.assert("name").notEmpty()
 		req.assert("model").notEmpty()
 		req.assert("vendor").notEmpty()
@@ -43,7 +41,7 @@ exports.create = (req, res) ->
 
 		# VALID PARAMETERS
 
-		cluster = req.body.cluster
+		system = req.body.system
 
 		data =
 			name: req.body.name
@@ -68,23 +66,23 @@ exports.create = (req, res) ->
 			primary_operating_system: req.body.primary_operating_system
 
 
-		client.INCR keys.component_key, (error, id) ->
+		redis.client.INCR keys.component_key, (error, id) ->
 
 			if error
 				res.json({ message: "internal error" }, 500)
 				return
 
-			client.HMSET keys.component_description(id), data, (error) ->
+			redis.client.HMSET keys.component_description(id), data, (error) ->
 
 				if error
 					res.json({ message: "internal error" }, 500)
 					return
 
-				client.SADD keys.cluster_components(cluster), id, (error) ->
+				redis.client.SADD keys.system_components(system), id, (error) ->
 					if error
 						res.json({ message: "internal error" }, 500)
 					else
-						res.json({ message: "component created successful" }, 200)
+						res.json({ message: "component created successful", data: data }, 200)
 
 
 exports.show = (req, res) ->
@@ -103,7 +101,7 @@ exports.show = (req, res) ->
 
 	component = req.params.component
 
-	client.HGETALL keys.component_description(component), (error, data) ->
+	redis.client.HGETALL keys.component_description(component), (error, data) ->
 		# ERROR
 		if error
 			res.json({ message: "internal error" }, 500)
