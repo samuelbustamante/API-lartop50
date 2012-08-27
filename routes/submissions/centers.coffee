@@ -1,6 +1,7 @@
 keys = require("./keys")
 auth = require("../auth/auth")
 redis = require("../redis/client")
+sanitize = require("validator").sanitize
 
 ########## CREATE ##########
 
@@ -14,13 +15,13 @@ exports.create = (req, res) ->
 			return
 
 		# VALIDATORS
-		req.assert("name").notEmpty()
-		req.assert("acronym").notEmpty()
-		req.assert("segment").notEmpty()
-		req.assert("country").notEmpty()
-		req.assert("city").notEmpty()
-		req.assert("url").isUrl()
-		req.assert("description").notEmpty()
+		req.assert("name", "Este campo es requerido.").notEmpty()
+		req.assert("acronym", "Este campo es requerido.").notEmpty()
+		req.assert("segment", "Este campo es requerido.").notEmpty()
+		req.assert("country", "Este campo es requerido.").notEmpty()
+		req.assert("city", "Este campo es requerido.").notEmpty()
+		req.assert("url", "Url inválida.").isUrl()
+		req.assert("description", "Este campo es requerido.").notEmpty()
 
 		# VALIDATE PARAMETERS
 		errors = req.validationErrors()
@@ -30,8 +31,19 @@ exports.create = (req, res) ->
 			res.json({ message: "invalid parameters", errors: errors }, 400)
 			return
 
-		# VALID PARAMETERS
-		req.sanitize("description").xss() # !!! VERIFICAR !!!
+		# VALID ENCODE HTML
+		req.sanitize("name").xss()
+		req.sanitize("name").entityEncode()
+		req.sanitize("acronym").xss()
+		req.sanitize("acronym").entityEncode()
+		req.sanitize("segment").xss()
+		req.sanitize("segment").entityEncode()
+		req.sanitize("country").xss()
+		req.sanitize("country").entityEncode()
+		req.sanitize("city").xss()
+		req.sanitize("city").entityEncode()
+		req.sanitize("description").xss()
+		req.sanitize("description").entityEncode()
 
 		redis.client.INCR keys.center_key(), (error, id) ->
 

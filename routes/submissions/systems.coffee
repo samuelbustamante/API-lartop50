@@ -14,14 +14,18 @@ exports.create = (req, res) ->
 			return
 
 		# VALIDATORS
-		req.assert("name").notEmpty()
-		req.assert("status").notEmpty()
-		req.assert("area").notEmpty()
-		req.assert("description").notEmpty()
-		req.assert("vendor").notEmpty()
-		req.assert("installation").isDate()
-		# ID CENTER
-		req.assert("center").notEmpty()
+		req.assert("name", "Este campo es requerido.").notEmpty()
+		req.assert("status", "Este campo es requerido.").notEmpty()
+		req.assert("area", "Este campo es requerido.").notEmpty()
+		req.assert("description", "Este campo es requerido.").notEmpty()
+		req.assert("vendor", "Este campo es requerido.").notEmpty()
+		req.assert("installation", "Este campo es requerido.").notEmpty()
+		req.assert("installation", "Este campo es de tipo entero.").isInt()
+		req.assert("installation", "Este campo es de longitud 4.").len(4)
+
+		# CENTER
+		req.assert("center", "Este campo es requerido.").notEmpty()
+		req.assert("center", "Este campo es de tipo entero").isInt()
 
 		# VALIDATE PARAMETERS
 		errors = req.validationErrors()
@@ -35,6 +39,18 @@ exports.create = (req, res) ->
 			if error
 				res.json({ message: "internal error" }, 500)
 				return
+
+			# ENCODE HTML
+			req.sanitize("name").xss()
+			req.sanitize("name").entityEncode()
+			req.sanitize("status").xss()
+			req.sanitize("status").entityEncode()
+			req.sanitize("area").xss()
+			req.sanitize("area").entityEncode()
+			req.sanitize("description").xss()
+			req.sanitize("description").entityEncode()
+			req.sanitize("vendor").xss()
+			req.sanitize("vendor").entityEncode()
 
 			# VALID PARAMETERS
 			center = req.body.center

@@ -17,24 +17,37 @@
         }, 401);
         return;
       }
-      req.assert("system").notEmpty();
-      req.assert("name").notEmpty();
-      req.assert("model").notEmpty();
-      req.assert("vendor").notEmpty();
-      req.assert("nodes").notEmpty();
-      req.assert("memory_node").notEmpty();
-      req.assert("processor_name").notEmpty();
-      req.assert("processor_model").notEmpty();
-      req.assert("processor_socket").notEmpty();
-      req.assert("processor_cores").notEmpty();
-      req.assert("processor_speed").notEmpty();
-      req.assert("accelerator_name").notEmpty();
-      req.assert("accelerator_model").notEmpty();
-      req.assert("accelerator_number").notEmpty();
-      req.assert("accelerator_cores").notEmpty();
-      req.assert("accelerator_speed").notEmpty();
-      req.assert("primary_interconection").notEmpty();
-      req.assert("primary_operating_system").notEmpty();
+      req.assert("system", "Este campo es requerido.").notEmpty();
+      req.assert("system", "Este campo es de tipo entero.").isInt();
+      req.assert("name", "Este campo es requerido.").notEmpty();
+      req.assert("model", "Este campo es requerido.").notEmpty();
+      req.assert("vendor", "Este campo es requerido.").notEmpty();
+      req.assert("nodes", "Este campo es requerido.").notEmpty();
+      req.assert("nodes", "Este campo es de tipo entero.").isInt();
+      req.assert("memory_node", "Este campo es requerido.").notEmpty();
+      req.assert("memory_node", "Este campo es de tipo entero.").isInt();
+      req.assert("processor_name", "Este campo es requerido.").notEmpty();
+      req.assert("processor_model", "Este campo es requerido.").notEmpty();
+      req.assert("processor_socket", "Este campo es requerido.").notEmpty();
+      req.assert("processor_socket", "Este campo es de tipo entero.").isInt();
+      req.assert("processor_cores", "Este campo es requerido.").notEmpty();
+      req.assert("processor_cores", "Este campo es de tipo entero.").isInt();
+      req.assert("processor_speed", "Este campo es requerido.").notEmpty();
+      req.assert("processor_speed", "Este campo es de tipo decimal.").isDecimal();
+      req.assert("accelerator_name", "Este campo es requerido.").notEmpty();
+      req.assert("accelerator_model", "Este campo es requerido.").notEmpty();
+      req.assert("accelerator_number", "Este campo es requerido.").notEmpty();
+      req.assert("accelerator_number", "Este campo es de tipo entero.").isInt();
+      req.assert("accelerator_cores", "Este campo es requerido.").notEmpty();
+      req.assert("accelerator_cores", "Este campo es de tipo entero.").isInt();
+      req.assert("accelerator_speed", "Este campo es requerido.").notEmpty();
+      req.assert("accelerator_speed", "Este campo es de tipo decimal.").isDecimal();
+      req.assert("peak_power", "Este campo es requerido.").notEmpty();
+      req.assert("peak_power", "Este campo es de tipo decimal.").isDecimal();
+      req.assert("measured_power", "Este campo es requerido.").notEmpty();
+      req.assert("measured_power", "Este campo es de tipo decimal.").isDecimal();
+      req.assert("interconection", "Este campo es requerido.").notEmpty();
+      req.assert("operating_system", "Este campo es requerido.").notEmpty();
       errors = req.validationErrors();
       if (errors) {
         res.json({
@@ -43,6 +56,24 @@
         }, 400);
         return;
       }
+      req.sanitize("name").xss();
+      req.sanitize("name").entityEncode();
+      req.sanitize("model").xss();
+      req.sanitize("model").entityEncode();
+      req.sanitize("vendor").xss();
+      req.sanitize("vendor").entityEncode();
+      req.sanitize("processor_name").xss();
+      req.sanitize("processor_name").entityEncode();
+      req.sanitize("processor_model").xss();
+      req.sanitize("processor_model").entityEncode();
+      req.sanitize("accelerator_name").xss();
+      req.sanitize("accelerator_name").entityEncode();
+      req.sanitize("accelerator_model").xss();
+      req.sanitize("accelerator_model").entityEncode();
+      req.sanitize("interconection").xss();
+      req.sanitize("interconection").entityEncode();
+      req.sanitize("operating_system").xss();
+      req.sanitize("operating_system").entityEncode();
       system = req.body.system;
       data = {
         name: req.body.name,
@@ -60,8 +91,8 @@
         accelerator_number: req.body.accelerator_number,
         accelerator_cores: req.body.accelerator_cores,
         accelerator_speed: req.body.accelerator_speed,
-        primary_interconection: req.body.primary_interconection,
-        primary_operating_system: req.body.primary_operating_system
+        interconection: req.body.interconection,
+        operating_system: req.body.operating_system
       };
       return redis.client.INCR(keys.component_key, function(error, id) {
         if (error) {

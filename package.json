@@ -12,6 +12,7 @@
     , "nodemailer": "0.3.21"
     , "express-resource": "0.2.4"
     , "express-validator": "0.2.0"
+    , "validator": "0.4.11"
     , "recaptcha": "1.1.0"
   }
 }

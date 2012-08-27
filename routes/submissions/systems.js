@@ -17,13 +17,16 @@
         }, 401);
         return;
       }
-      req.assert("name").notEmpty();
-      req.assert("status").notEmpty();
-      req.assert("area").notEmpty();
-      req.assert("description").notEmpty();
-      req.assert("vendor").notEmpty();
-      req.assert("installation").isDate();
-      req.assert("center").notEmpty();
+      req.assert("name", "Este campo es requerido.").notEmpty();
+      req.assert("status", "Este campo es requerido.").notEmpty();
+      req.assert("area", "Este campo es requerido.").notEmpty();
+      req.assert("description", "Este campo es requerido.").notEmpty();
+      req.assert("vendor", "Este campo es requerido.").notEmpty();
+      req.assert("installation", "Este campo es requerido.").notEmpty();
+      req.assert("installation", "Este campo es de tipo entero.").isInt();
+      req.assert("installation", "Este campo es de longitud 4.").len(4);
+      req.assert("center", "Este campo es requerido.").notEmpty();
+      req.assert("center", "Este campo es de tipo entero").isInt();
       errors = req.validationErrors();
       if (errors) {
         res.json({
@@ -40,6 +43,16 @@
           }, 500);
           return;
         }
+        req.sanitize("name").xss();
+        req.sanitize("name").entityEncode();
+        req.sanitize("status").xss();
+        req.sanitize("status").entityEncode();
+        req.sanitize("area").xss();
+        req.sanitize("area").entityEncode();
+        req.sanitize("description").xss();
+        req.sanitize("description").entityEncode();
+        req.sanitize("vendor").xss();
+        req.sanitize("vendor").entityEncode();
         center = req.body.center;
         data = {
           id: id,
