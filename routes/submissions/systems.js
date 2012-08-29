@@ -142,21 +142,38 @@
               cmds.push(['HGETALL', keys.component_description(component)]);
             }
             return redis.client.multi(cmds).exec(function(error, replies) {
-              var data;
               if (error) {
                 res.json({
                   message: "internal error"
                 }, 500);
                 return;
               }
-              data = {
-                description: description,
-                components: replies
-              };
-              return res.json({
-                message: "success",
-                data: data
-              }, 200);
+              return redis.client.GET(keys.system_linpack(system), function(error, id) {
+                if (error) {
+                  res.json({
+                    message: "internal error"
+                  }, 500);
+                  return;
+                }
+                return redis.client.HGETALL(keys.linpack_description(id), function(error, linpack) {
+                  var data;
+                  if (error) {
+                    res.json({
+                      message: "internal error"
+                    }, 500);
+                    return;
+                  }
+                  data = {
+                    description: description,
+                    components: replies,
+                    linpack: linpack
+                  };
+                  return res.json({
+                    message: "success",
+                    data: data
+                  }, 200);
+                });
+              });
             });
           });
         });

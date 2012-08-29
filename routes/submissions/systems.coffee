@@ -133,8 +133,19 @@ exports.show = (req, res) ->
 							res.json({ message: "internal error" }, 500)
 							return
 
-						data =
-							description: description
-							components: replies
+						redis.client.GET keys.system_linpack(system), (error, id) ->
+							if error
+								res.json({ message: "internal error" }, 500)
+								return
 
-						res.json({ message: "success", data: data }, 200)
+							redis.client.HGETALL keys.linpack_description(id), (error, linpack) ->
+								if error
+									res.json({ message: "internal error" }, 500)
+									return
+
+								data =
+									description: description
+									components: replies
+									linpack: linpack
+
+								res.json({ message: "success", data: data }, 200)

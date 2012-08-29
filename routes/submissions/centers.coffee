@@ -1,7 +1,6 @@
 keys = require("./keys")
 auth = require("../auth/auth")
 redis = require("../redis/client")
-sanitize = require("validator").sanitize
 
 ########## CREATE ##########
 
